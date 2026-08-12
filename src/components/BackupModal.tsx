@@ -57,8 +57,8 @@ export const BackupModal: React.FC<BackupModalProps> = ({ isOpen, onClose }) => 
         )}
 
         {importStatus && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs rounded-keepeit flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 shrink-0" />
+          <div className="p-3 bg-[var(--bg-surface)] border border-zinc-500/30 text-[var(--text-primary)] text-xs rounded-keepeit flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 shrink-0 text-[var(--accent-seal)]" />
             <span>{importStatus}</span>
           </div>
         )}
@@ -79,7 +79,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ isOpen, onClose }) => 
               exportBackup();
               onClose();
             }}
-            className="w-full py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center justify-center gap-2"
+            className="btn-stealth-primary w-full py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center justify-center gap-2"
           >
             <Download className="w-4 h-4" />
             <span>DOWNLOAD ENCRYPTED BACKUP FILE</span>

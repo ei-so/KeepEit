@@ -83,7 +83,7 @@ export const SealBar: React.FC = () => {
         {swUpdateWaiting && (
           <button
             onClick={reloadAppForUpdate}
-            className="flex items-center gap-1.5 bg-[var(--accent-seal)] text-white px-2.5 py-0.5 rounded-keepeit font-bold animate-pulse hover:opacity-90"
+            className="flex items-center gap-1.5 bg-[var(--accent-seal)] text-[var(--accent-fg)] px-2.5 py-0.5 rounded-keepeit font-bold animate-pulse hover:opacity-90"
             title="A new version of KeepEit is available. Reload to update."
           >
             <DownloadCloud className="w-3.5 h-3.5" />

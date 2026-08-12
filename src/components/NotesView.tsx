@@ -325,7 +325,7 @@ export const NotesView: React.FC = () => {
             </div>
             <button
               onClick={handleCreateNewNote}
-              className="px-2.5 py-1 bg-[var(--accent-seal)] text-white text-[11px] font-mono-label font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1 shadow-xs"
+              className="btn-stealth-primary px-2.5 py-1 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-[11px] font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1 shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>NEW</span>
@@ -465,7 +465,7 @@ export const NotesView: React.FC = () => {
                         }}
                         className={`text-[10px] font-mono px-2 py-0.5 rounded-keepeit border-keepeit transition-colors ${
                           isSelected
-                            ? 'bg-[var(--accent-seal)] text-white border-[var(--accent-seal)]'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] border-[var(--accent-seal)] font-semibold'
                             : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                         }`}
                       >
@@ -503,7 +503,7 @@ export const NotesView: React.FC = () => {
                 </p>
                 <button
                   onClick={handleCreateNewNote}
-                  className="px-3 py-1.5 bg-[var(--accent-seal)] text-white text-xs font-mono-label rounded-keepeit hover:opacity-90 mx-auto block"
+                  className="btn-stealth-primary px-3 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-xs font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] mx-auto block"
                 >
                   CREATE NOTE
                 </button>
@@ -638,7 +638,7 @@ export const NotesView: React.FC = () => {
               </div>
               <button
                 onClick={handleCreateNewNote}
-                className="px-4 py-2 bg-[var(--accent-seal)] text-white text-xs font-mono-label font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-2"
+                className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-xs font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 <span>CREATE NEW NOTE</span>
@@ -675,7 +675,7 @@ export const NotesView: React.FC = () => {
                         onClick={() => setViewMode('write')}
                         className={`px-2.5 py-1 rounded-keepeit transition-colors flex items-center gap-1.5 ${
                           viewMode === 'write'
-                            ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                             : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                         }`}
                       >
@@ -686,7 +686,7 @@ export const NotesView: React.FC = () => {
                         onClick={() => setViewMode('preview')}
                         className={`px-2.5 py-1 rounded-keepeit transition-colors flex items-center gap-1.5 ${
                           viewMode === 'preview'
-                            ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                             : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                         }`}
                       >

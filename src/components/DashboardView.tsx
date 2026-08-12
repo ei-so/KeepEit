@@ -114,7 +114,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => onNavigate('vault')}
-              className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1.5"
+              className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1.5"
             >
               <Shield className="w-4 h-4" /> OPEN VAULT
             </button>
@@ -322,7 +322,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
             {/* Action: Create Backup */}
             <button
               onClick={exportBackup}
-              className="w-full py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center justify-center gap-1.5"
+              className="btn-stealth-primary w-full py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center justify-center gap-1.5"
             >
               <Download className="w-4 h-4" /> CREATE ENCRYPTED BACKUP
             </button>
@@ -381,7 +381,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
 
                       <button
                         onClick={() => handleCopy(cred.password, cred.id + '-pass')}
-                        className="px-2 py-1 bg-[var(--accent-seal)] text-white rounded-keepeit hover:opacity-90 flex items-center gap-1 font-semibold"
+                        className="px-2 py-1 bg-[var(--accent-seal)] text-[var(--accent-fg)] rounded-keepeit hover:opacity-90 flex items-center gap-1 font-semibold"
                       >
                         {copiedId === cred.id + '-pass' ? (
                           <Check className="w-3 h-3" />
@@ -448,12 +448,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
                     </div>
 
                     <span
-                      className={`px-2 py-0.5 text-[9px] font-mono-label rounded-keepeit text-white font-bold shrink-0 ${
+                      className={`px-2 py-0.5 text-[9px] font-mono-label rounded-keepeit font-bold shrink-0 ${
                         task.priority === 'high'
-                          ? 'bg-[var(--accent-rust)]'
+                          ? 'bg-[var(--accent-rust)] text-white'
                           : task.priority === 'medium'
-                          ? 'bg-amber-500'
-                          : 'bg-[var(--accent-seal)]'
+                          ? 'bg-amber-500 text-white'
+                          : 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                       }`}
                     >
                       {task.priority.toUpperCase()}

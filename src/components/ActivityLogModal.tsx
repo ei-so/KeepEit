@@ -23,7 +23,7 @@ export const ActivityLogModal: React.FC<ActivityLogModalProps> = ({ isOpen, onCl
   const getActionBadge = (action: ActivityLogItem['action']) => {
     switch (action) {
       case 'create':
-        return <span className="px-2 py-0.5 rounded-keepeit bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono-label text-[10px]">CREATE</span>;
+        return <span className="px-2 py-0.5 rounded-keepeit bg-zinc-500/10 text-[var(--text-primary)] border border-zinc-500/20 font-mono-label text-[10px]">CREATE</span>;
       case 'update':
         return <span className="px-2 py-0.5 rounded-keepeit bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-mono-label text-[10px]">UPDATE</span>;
       case 'delete':

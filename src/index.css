@@ -1,37 +1,48 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
-    --ink: #121A16;
-    --paper: #E9EBE4;
-    --seal: #2F6F52;
-    --seal-soft: #CBDCD0;
-    --rust: #B4472C;
-    --graphite: #7A8479;
+  :root,
+  [data-theme='light'] {
+    --ink: #09090B;
+    --paper: #FAFAFA;
+    --seal: #18181B;
+    --seal-soft: #F4F4F5;
+    --rust: #DC2626;
+    --graphite: #71717A;
 
-    --bg-main: #E9EBE4;
-    --bg-surface: #F2F4EE;
-    --bg-surface-hover: #DFE2DA;
+    --bg-main: #FAFAFA;
+    --bg-surface: #F4F4F5;
+    --bg-surface-hover: #E4E4E7;
     --bg-card: #FFFFFF;
-    --text-primary: #121A16;
-    --text-muted: #7A8479;
-    --border-color: rgba(122, 132, 121, 0.25);
-    --accent-seal: #2F6F52;
-    --accent-seal-soft: #CBDCD0;
-    --accent-rust: #B4472C;
+    --text-primary: #09090B;
+    --text-muted: #71717A;
+    --border-color: rgba(113, 113, 122, 0.15);
+    --accent-seal: #E4E4E7;
+    --accent-seal-soft: #27272A;
+    --accent-fg: #09090B;
+    --accent-rust: #DC2626;
   }
 
-  .dark {
-    --bg-main: #121A16;
-    --bg-surface: #1A241F;
-    --bg-surface-hover: #233029;
-    --bg-card: #16201B;
-    --text-primary: #E9EBE4;
-    --text-muted: #9CA59B;
-    --border-color: rgba(122, 132, 121, 0.25);
-    --accent-seal: #388462;
-    --accent-seal-soft: rgba(47, 111, 82, 0.35);
-    --accent-rust: #D95A3F;
+  .dark,
+  [data-theme='dark'] {
+    --ink: #09090B;
+    --paper: #FAFAFA;
+    --seal: #E4E4E7;
+    --seal-soft: #27272A;
+    --rust: #DC2626;
+    --graphite: #71717A;
+
+    --bg-main: #09090B;
+    --bg-surface: #18181B;
+    --bg-surface-hover: #27272A;
+    --bg-card: #121215;
+    --text-primary: #FAFAFA;
+    --text-muted: #71717A;
+    --border-color: rgba(113, 113, 122, 0.15);
+    --accent-seal: #E4E4E7;
+    --accent-seal-soft: #27272A;
+    --accent-fg: #09090B;
+    --accent-rust: #DC2626;
   }
 
   body {
@@ -67,6 +78,27 @@
   /* 1px graphite 25% opacity border */
   .border-keepeit {
     border: 1px solid var(--border-color);
+  }
+
+  /* Stealth Dark Primary Action Button Style (Option B) */
+  .btn-stealth-primary {
+    background-color: var(--accent-seal) !important;
+    color: var(--accent-fg) !important;
+    border: 1px solid rgba(113, 113, 122, 0.4) !important;
+    font-weight: 600;
+    transition: all 0.15s ease-in-out;
+  }
+  .btn-stealth-primary:hover {
+    opacity: 0.92;
+    filter: brightness(0.95);
+  }
+  .btn-stealth-primary:active {
+    transform: scale(0.98);
+  }
+  .btn-stealth-primary:focus-visible,
+  .btn-stealth-primary:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px var(--bg-main), 0 0 0 4px var(--accent-seal) !important;
   }
 
   /* Visible focus ring on interactive elements */

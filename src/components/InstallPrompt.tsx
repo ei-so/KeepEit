@@ -160,7 +160,7 @@ export const IosInstallSheetModal: React.FC<{
         <div className="pt-2 flex justify-end">
           <button
             onClick={onClose}
-            className="w-full py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+            className="w-full py-2 bg-[var(--accent-seal)] text-[var(--accent-fg)] font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
           >
             GOT IT
           </button>
@@ -221,7 +221,7 @@ export const InstallButton: React.FC<{
   const baseStyle = "px-3 py-1.5 font-mono-label text-xs font-semibold rounded-keepeit flex items-center gap-1.5 transition-opacity ";
   const variantStyle =
     variant === 'primary'
-      ? "bg-[var(--accent-seal)] text-white hover:opacity-90"
+      ? "bg-[var(--accent-seal)] text-[var(--accent-fg)] hover:opacity-90 font-bold"
       : variant === 'outline'
       ? "bg-[var(--bg-card)] border border-keepeit text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]"
       : "bg-[var(--bg-surface)] text-[var(--accent-seal)] hover:bg-[var(--bg-surface-hover)]";

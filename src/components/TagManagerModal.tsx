@@ -51,7 +51,7 @@ export const TagManagerModal: React.FC<TagManagerModalProps> = ({ isOpen, onClos
             />
             <button
               type="submit"
-              className="px-3 py-1.5 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1"
+              className="btn-stealth-primary px-3 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1"
             >
               <Plus className="w-4 h-4" />
               <span>ADD</span>

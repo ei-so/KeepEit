@@ -232,7 +232,7 @@ function VaultAppContent() {
               <div className="pt-3 border-t border-keepeit">
                 <button
                   onClick={() => setCurrentRoute('vault')}
-                  className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+                  className="px-4 py-2 bg-[var(--accent-seal)] text-[var(--accent-fg)] font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
                 >
                   GO TO VAULT MODULE
                 </button>

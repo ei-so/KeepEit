@@ -143,7 +143,7 @@ export const TasksView: React.FC = () => {
         );
       case 'medium':
         return (
-          <span className="px-2 py-0.5 rounded-keepeit text-[10px] font-mono font-bold bg-[var(--accent-seal)] text-white shadow-xs">
+          <span className="px-2 py-0.5 rounded-keepeit text-[10px] font-mono font-bold bg-[var(--accent-seal)] text-[var(--accent-fg)] shadow-xs">
             MEDIUM
           </span>
         );
@@ -185,7 +185,7 @@ export const TasksView: React.FC = () => {
           {/* Group Inline "+" */}
           <button
             onClick={() => handleOpenNewModal(statusKey)}
-            className="px-2.5 py-1 bg-[var(--accent-seal)] text-white text-[11px] font-mono-label font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1 shadow-xs"
+            className="px-2.5 py-1 bg-[var(--accent-seal)] text-[var(--accent-fg)] text-[11px] font-mono-label font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1 shadow-xs"
             title={`Add new task to ${title}`}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -367,7 +367,7 @@ export const TasksView: React.FC = () => {
 
             <button
               onClick={() => handleOpenNewModal('todo')}
-              className="px-3.5 py-1.5 bg-[var(--accent-seal)] text-white text-xs font-mono-label font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1.5 shadow-xs"
+              className="btn-stealth-primary px-3.5 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-xs font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1.5 shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>NEW TASK</span>
@@ -448,7 +448,7 @@ export const TasksView: React.FC = () => {
             </p>
             <button
               onClick={() => handleOpenNewModal('todo')}
-              className="px-4 py-2 bg-[var(--accent-seal)] text-white text-xs font-mono-label font-semibold rounded-keepeit hover:opacity-90 mx-auto block"
+              className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-xs font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] mx-auto block"
             >
               CREATE TASK
             </button>

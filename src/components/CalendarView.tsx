@@ -110,7 +110,7 @@ export const CalendarView: React.FC = () => {
         return 'bg-amber-500 text-white';
       case 'low':
       default:
-        return 'bg-[var(--accent-seal)] text-white';
+        return 'bg-[var(--accent-seal)] text-[var(--accent-fg)]';
     }
   };
 
@@ -224,7 +224,7 @@ export const CalendarView: React.FC = () => {
                   onClick={() => setViewMode(mode)}
                   className={`px-3 py-1 rounded-keepeit transition-colors uppercase ${
                     viewMode === mode
-                      ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                      ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                       : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                   }`}
                 >
@@ -283,7 +283,7 @@ export const CalendarView: React.FC = () => {
                       <span
                         className={`font-mono text-xs font-bold px-1.5 py-0.5 rounded-full ${
                           isToday
-                            ? 'bg-[var(--accent-seal)] text-white'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                             : 'text-[var(--text-primary)]'
                         }`}
                       >
@@ -432,7 +432,7 @@ export const CalendarView: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <h3 className="font-display font-bold text-sm text-[var(--text-primary)]">{monthName}</h3>
                     {isCurrentMonth && (
-                      <span className="px-1.5 py-0.5 bg-[var(--accent-seal)] text-white text-[9px] font-mono-label rounded-full">
+                      <span className="px-1.5 py-0.5 bg-[var(--accent-seal)] text-[var(--accent-fg)] text-[9px] font-mono-label rounded-full font-bold">
                         CURRENT
                       </span>
                     )}
@@ -506,7 +506,7 @@ export const CalendarView: React.FC = () => {
                       </div>
                       <button
                         onClick={() => toggleTaskStatus(t.id, 'completed')}
-                        className="px-2 py-1 bg-[var(--accent-seal)] text-white text-[10px] font-mono-label rounded-keepeit shrink-0"
+                        className="px-2 py-1 bg-[var(--accent-seal)] text-[var(--accent-fg)] text-[10px] font-mono-label font-bold rounded-keepeit shrink-0"
                       >
                         DONE
                       </button>
@@ -619,7 +619,7 @@ export const CalendarView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+                  className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
                 >
                   CREATE TASK
                 </button>

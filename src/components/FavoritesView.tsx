@@ -72,7 +72,7 @@ export const FavoritesView: React.FC = () => {
               onClick={() => setLayoutMode('grid')}
               className={`p-1.5 rounded-keepeit text-xs flex items-center gap-1 font-mono-label transition-colors ${
                 layoutMode === 'grid'
-                  ? 'bg-[var(--accent-seal)] text-white'
+                  ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
               title="Grid View"
@@ -84,7 +84,7 @@ export const FavoritesView: React.FC = () => {
               onClick={() => setLayoutMode('list')}
               className={`p-1.5 rounded-keepeit text-xs flex items-center gap-1 font-mono-label transition-colors ${
                 layoutMode === 'list'
-                  ? 'bg-[var(--accent-seal)] text-white'
+                  ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
               title="List View"
@@ -109,14 +109,14 @@ export const FavoritesView: React.FC = () => {
               onClick={() => setActiveTab(tab.id as FavoriteCategory)}
               className={`px-3 py-1.5 rounded-keepeit border border-keepeit shrink-0 transition-colors flex items-center gap-1.5 ${
                 activeTab === tab.id
-                  ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                  ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                   : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
               }`}
             >
               <span>{tab.label}</span>
               <span
                 className={`px-1.5 py-0.5 text-[10px] rounded-full ${
-                  activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-[var(--bg-main)] text-[var(--text-muted)]'
+                  activeTab === tab.id ? 'bg-[var(--accent-fg)]/20 text-[var(--accent-fg)]' : 'bg-[var(--bg-main)] text-[var(--text-muted)]'
                 }`}
               >
                 {tab.count}
@@ -238,7 +238,7 @@ export const FavoritesView: React.FC = () => {
 
                       <button
                         onClick={() => handleCopy(cred.password, cred.id + '-pass')}
-                        className="px-2 py-1 bg-[var(--accent-seal)] text-white hover:opacity-90 rounded-keepeit text-[10px] font-semibold flex items-center gap-1"
+                        className="px-2 py-1 bg-[var(--accent-seal)] text-[var(--accent-fg)] hover:opacity-90 rounded-keepeit text-[10px] font-semibold flex items-center gap-1"
                       >
                         {copiedId === cred.id + '-pass' ? <Check className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
                         <span>PASSWORD</span>

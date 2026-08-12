@@ -11,13 +11,13 @@ interface FolderManagerModalProps {
 export const FolderManagerModal: React.FC<FolderManagerModalProps> = ({ isOpen, onClose }) => {
   const { vaultData, addFolder, updateFolder, deleteFolder, toggleFavoriteFolder } = useVault();
   const [folderName, setFolderName] = useState('');
-  const [folderColor, setFolderColor] = useState('#2F6F52');
+  const [folderColor, setFolderColor] = useState('#27272A');
   const [folderScope, setFolderScope] = useState<'credentials' | 'notes' | 'all'>('credentials');
   
   // Edit mode state
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
-  const [editColor, setEditColor] = useState('#2F6F52');
+  const [editColor, setEditColor] = useState('#27272A');
   const [editScope, setEditScope] = useState<'credentials' | 'notes' | 'all'>('credentials');
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export const FolderManagerModal: React.FC<FolderManagerModalProps> = ({ isOpen, 
   const startEdit = (f: Folder) => {
     setEditingFolderId(f.id);
     setEditName(f.name);
-    setEditColor(f.color || '#2F6F52');
+    setEditColor(f.color || '#27272A');
     setEditScope(f.scope === 'notes' ? 'notes' : f.scope === 'credentials' ? 'credentials' : 'all');
   };
 
@@ -57,7 +57,7 @@ export const FolderManagerModal: React.FC<FolderManagerModalProps> = ({ isOpen, 
     setEditingFolderId(null);
   };
 
-  const presetColors = ['#2F6F52', '#B4472C', '#7A8479', '#2563EB', '#7C3AED', '#DB2777', '#D97706'];
+  const presetColors = ['#E4E4E7', '#27272A', '#71717A', '#DC2626', '#2563EB', '#7C3AED', '#D97706'];
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
@@ -132,7 +132,7 @@ export const FolderManagerModal: React.FC<FolderManagerModalProps> = ({ isOpen, 
 
           <button
             type="submit"
-            className="w-full py-1.5 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center justify-center gap-1.5"
+            className="btn-stealth-primary w-full py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center justify-center gap-1.5"
           >
             <FolderPlus className="w-4 h-4" />
             <span>CREATE FOLDER</span>
@@ -173,7 +173,7 @@ export const FolderManagerModal: React.FC<FolderManagerModalProps> = ({ isOpen, 
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleSaveEdit(f)}
-                          className="px-2 py-1 bg-[var(--accent-seal)] text-white rounded-keepeit text-[10px] font-mono-label"
+                          className="px-2 py-1 bg-[var(--accent-seal)] text-[var(--accent-fg)] rounded-keepeit text-[10px] font-mono-label font-bold"
                         >
                           SAVE
                         </button>

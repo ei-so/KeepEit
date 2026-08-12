@@ -72,7 +72,7 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'note':
-        return <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
+        return <FileText className="w-5 h-5 text-[var(--accent-seal)]" />;
       case 'credential':
         return <Key className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
       case 'card':
@@ -184,7 +184,7 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
                     className="flex items-center gap-1 px-2 py-1 bg-[var(--bg-card)] border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors"
                   >
                     {copiedField === 'username' ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <Check className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
@@ -215,7 +215,7 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
                     className="flex items-center gap-1 px-2 py-1 bg-[var(--bg-card)] border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] transition-colors"
                   >
                     {copiedField === 'password' ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <Check className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
@@ -315,7 +315,7 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
                 className="flex items-center gap-1 text-xs font-mono-label text-[var(--accent-seal)] hover:underline"
               >
                 {copiedField === 'note' ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <Check className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
                 ) : (
                   <Copy className="w-3.5 h-3.5" />
                 )}
@@ -332,9 +332,9 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
         {item.category === 'card' && (
           <div className="space-y-4">
             {/* Stylized Visual Card */}
-            <div className="p-6 rounded-keepeit bg-gradient-to-br from-[#121A16] to-[#2F6F52] text-white space-y-4 shadow-md font-mono relative overflow-hidden">
+            <div className="p-6 rounded-keepeit bg-gradient-to-br from-zinc-900 to-zinc-800 text-white space-y-4 shadow-md font-mono relative overflow-hidden border border-zinc-700/50">
               <div className="flex items-center justify-between">
-                <span className="text-xs tracking-widest text-[#CBDCD0]">PAYMENT CARD</span>
+                <span className="text-xs tracking-widest text-zinc-400">PAYMENT CARD</span>
                 <span className="font-bold text-sm uppercase">{item.cardType || 'VISA'}</span>
               </div>
               <div className="text-xl tracking-widest font-semibold py-2">
@@ -342,11 +342,11 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
               </div>
               <div className="flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-[10px] text-[#CBDCD0] block">CARDHOLDER</span>
+                  <span className="text-[10px] text-zinc-400 block">CARDHOLDER</span>
                   <span className="uppercase font-semibold">{item.cardholderName || 'VALUED HOLDER'}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-[#CBDCD0] block">EXPIRES</span>
+                  <span className="text-[10px] text-zinc-400 block">EXPIRES</span>
                   <span>{item.expiryMonth}/{item.expiryYear}</span>
                 </div>
               </div>
@@ -430,14 +430,14 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
                 className="flex items-center gap-1 text-xs font-mono-label text-[var(--accent-seal)] hover:underline"
               >
                 {copiedField === 'code' ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  <Check className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
                 ) : (
                   <Copy className="w-3.5 h-3.5" />
                 )}
                 <span>{copiedField === 'code' ? 'COPIED CODE' : 'COPY CODE'}</span>
               </button>
             </div>
-            <pre className="p-4 bg-[#121A16] text-[#E9EBE4] border-keepeit rounded-keepeit text-xs font-mono overflow-x-auto leading-relaxed">
+            <pre className="p-4 bg-[var(--bg-surface)] text-[var(--text-primary)] border-keepeit rounded-keepeit text-xs font-mono overflow-x-auto leading-relaxed">
               <code>{item.code}</code>
             </pre>
           </div>
@@ -463,7 +463,7 @@ export const ItemDetail: React.FC<ItemDetailProps> = ({
                 <a
                   href={item.dataUrl}
                   download={item.fileName}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--accent-seal)] text-[var(--accent-fg)] font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>DOWNLOAD</span>

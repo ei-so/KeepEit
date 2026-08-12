@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useVault } from '../hooks/useVault';
+import { Logo } from './Logo';
 import {
   Search,
   Plus,
@@ -71,7 +72,8 @@ export const Header: React.FC<HeaderProps> = ({
           {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
 
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-center gap-2">
+          <Logo size="sm" />
           <span className="font-display text-xl font-bold tracking-tight text-[var(--text-primary)]">
             KeepEit
           </span>
@@ -110,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Primary Action: New Item */}
         <button
           onClick={onOpenNewItemModal}
-          className="flex items-center gap-1.5 bg-[var(--accent-seal)] text-white hover:opacity-90 px-3 py-1.5 rounded-keepeit font-mono-label text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--accent-seal)]"
+          className="btn-stealth-primary flex items-center gap-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] px-3 py-1.5 rounded-keepeit font-mono-label text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
         >
           <Plus className="w-4 h-4" />
           <span className="hidden sm:inline">NEW ITEM</span>

@@ -322,7 +322,7 @@ export const ItemEditorModal: React.FC<ItemEditorModalProps> = ({
                       onClick={() => setCategory(cat.id as any)}
                       className={`flex flex-col items-center justify-center gap-1 p-2 rounded-keepeit text-xs font-mono-label border-keepeit transition-colors ${
                         isSel
-                          ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                          ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                           : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                       }`}
                     >
@@ -622,7 +622,7 @@ export const ItemEditorModal: React.FC<ItemEditorModalProps> = ({
                   value={snippetCode}
                   onChange={(e) => setSnippetCode(e.target.value)}
                   placeholder="// Paste code snippet here..."
-                  className="w-full bg-[#121A16] text-[#E9EBE4] border-keepeit rounded-keepeit p-3 text-xs font-mono leading-relaxed"
+                  className="w-full bg-[var(--bg-surface)] text-[var(--text-primary)] border-keepeit rounded-keepeit p-3 text-xs font-mono leading-relaxed"
                 />
               </div>
             </div>
@@ -680,7 +680,7 @@ export const ItemEditorModal: React.FC<ItemEditorModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 transition-opacity"
+              className="btn-stealth-primary px-5 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
             >
               SAVE TO ENCRYPTED VAULT
             </button>

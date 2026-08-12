@@ -172,7 +172,7 @@ export const IncomeView: React.FC = () => {
 
           <button
             onClick={handleOpenAddModal}
-            className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 shrink-0"
+            className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center justify-center gap-1.5 shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>RECORD INCOME</span>
@@ -290,7 +290,7 @@ export const IncomeView: React.FC = () => {
             {!searchQuery && selectedCategory === 'all' && (
               <button
                 onClick={handleOpenAddModal}
-                className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 inline-flex items-center gap-1.5"
+                className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] inline-flex items-center gap-1.5"
               >
                 <Plus className="w-4 h-4" /> RECORD FIRST ENTRY
               </button>
@@ -520,7 +520,7 @@ export const IncomeView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+                  className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
                 >
                   {editingItem ? 'SAVE CHANGES' : 'RECORD ENTRY'}
                 </button>

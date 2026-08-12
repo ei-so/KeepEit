@@ -250,7 +250,7 @@ export const VaultView: React.FC = () => {
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-keepeit transition-colors ${
                 viewMode === 'grid'
-                  ? 'bg-[var(--accent-seal)] text-white'
+                  ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
               title="Grid View"
@@ -261,7 +261,7 @@ export const VaultView: React.FC = () => {
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-keepeit transition-colors ${
                 viewMode === 'list'
-                  ? 'bg-[var(--accent-seal)] text-white'
+                  ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
               title="List View"
@@ -273,7 +273,7 @@ export const VaultView: React.FC = () => {
           {/* Primary Action Button */}
           <button
             onClick={handleOpenNewModal}
-            className="px-3.5 py-1.5 bg-[var(--accent-seal)] text-white rounded-keepeit font-mono-label text-xs font-semibold hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-xs"
+            className="btn-stealth-primary px-3.5 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] rounded-keepeit font-mono-label text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1.5 shadow-xs"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">NEW CREDENTIAL</span>
@@ -316,7 +316,7 @@ export const VaultView: React.FC = () => {
             ) : (
               <button
                 onClick={handleOpenNewModal}
-                className="px-5 py-2.5 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center justify-center gap-2 mx-auto"
+                className="btn-stealth-primary px-5 py-2.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center justify-center gap-2 mx-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add your first credential</span>
@@ -693,7 +693,7 @@ export const VaultView: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleOpenEditModal(itemDetail)}
-                  className="px-4 py-1.5 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+                  className="btn-stealth-primary px-4 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
                 >
                   EDIT
                 </button>
@@ -1152,7 +1152,7 @@ const CredentialEditorModal: React.FC<CredentialEditorModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+              className="btn-stealth-primary px-4 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
             >
               SAVE CREDENTIAL
             </button>

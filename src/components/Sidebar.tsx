@@ -1,5 +1,6 @@
 import React from 'react';
 import { useVault } from '../hooks/useVault';
+import { Logo } from './Logo';
 import {
   LayoutDashboard,
   Shield,
@@ -105,10 +106,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div className="flex flex-col h-full select-none text-xs">
       {/* Collapse Toggle Bar */}
       <div className="p-3 border-b border-keepeit flex items-center justify-between">
-        {!isCollapsed && (
-          <span className="font-mono-label font-bold text-[11px] text-[var(--text-muted)] tracking-wider">
-            WORKSPACE NAV
-          </span>
+        {!isCollapsed ? (
+          <div className="flex items-center gap-2">
+            <Logo size="xs" />
+            <span className="font-mono-label font-bold text-[11px] text-[var(--text-muted)] tracking-wider">
+              WORKSPACE NAV
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center mx-auto my-0.5">
+            <Logo size="xs" />
+          </div>
         )}
         <button
           onClick={onToggleCollapse}

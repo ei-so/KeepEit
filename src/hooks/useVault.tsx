@@ -143,6 +143,42 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isUnlocked]);
 
+  // Apply saved accent palette and font scale to document
+  useEffect(() => {
+    if (vaultData?.settings) {
+      const root = document.documentElement;
+      const accent = vaultData.settings.accent || 'seal';
+      const fontScale = vaultData.settings.fontScale || 'M';
+
+      if (accent === 'rust') {
+        root.style.setProperty('--accent-seal', '#DC2626');
+        root.style.setProperty('--accent-seal-soft', 'rgba(220, 38, 38, 0.15)');
+        root.style.setProperty('--accent-fg', '#FAFAFA');
+      } else if (accent === 'graphite') {
+        root.style.setProperty('--accent-seal', '#71717A');
+        root.style.setProperty('--accent-seal-soft', 'rgba(113, 113, 122, 0.15)');
+        root.style.setProperty('--accent-fg', '#FAFAFA');
+      } else if (accent === 'ink') {
+        root.style.setProperty('--accent-seal', '#09090B');
+        root.style.setProperty('--accent-seal-soft', '#27272A');
+        root.style.setProperty('--accent-fg', '#FAFAFA');
+      } else {
+        // seal (STEALTH SILVER) default
+        root.style.setProperty('--accent-seal', '#E4E4E7');
+        root.style.setProperty('--accent-seal-soft', '#27272A');
+        root.style.setProperty('--accent-fg', '#09090B');
+      }
+
+      if (fontScale === 'S') {
+        root.style.fontSize = '13px';
+      } else if (fontScale === 'L') {
+        root.style.fontSize = '15px';
+      } else {
+        root.style.fontSize = '14px';
+      }
+    }
+  }, [vaultData?.settings?.accent, vaultData?.settings?.fontScale]);
+
   // Reset idle timer on user activity
   useEffect(() => {
     const handleUserActivity = () => {
@@ -499,7 +535,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
 
   const addFolder = async (
     folderName: string,
-    color = '#2F6F52',
+    color = '#71717A',
     scope: 'credentials' | 'notes' | 'tasks' | 'income' | 'all' = 'credentials'
   ) => {
     const newFolder: Folder = {
@@ -547,7 +583,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     resetTimer();
   };
 
-  const addTag = async (tagName: string, color = '#7A8479') => {
+  const addTag = async (tagName: string, color = '#71717A') => {
     const cleanName = tagName.trim();
     const newTag: Tag = {
       id: 'tag-' + Date.now(),
@@ -591,7 +627,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     const updated = await store.mutate((data) => {
       data.accountProfile = {
         displayName: profile.displayName ?? data.accountProfile?.displayName ?? 'Kurt Ross Gonzaga',
-        avatarColor: profile.avatarColor ?? data.accountProfile?.avatarColor ?? '#2F6F52',
+        avatarColor: profile.avatarColor ?? data.accountProfile?.avatarColor ?? '#27272A',
       };
     });
     setVaultData(updated);

@@ -142,7 +142,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   useEffect(() => {
     if (vaultData) {
       setDisplayName(vaultData.accountProfile?.displayName || 'Kurt Ross Gonzaga');
-      setAvatarColor(vaultData.accountProfile?.avatarColor || '#2F6F52');
+      setAvatarColor(vaultData.accountProfile?.avatarColor || '#27272A');
       setAccent(vaultData.settings?.accent || 'seal');
       setFontScale(vaultData.settings?.fontScale || 'M');
     }
@@ -161,18 +161,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   useEffect(() => {
     const root = document.documentElement;
     if (accent === 'rust') {
-      root.style.setProperty('--accent-seal', '#B4472C');
-      root.style.setProperty('--accent-seal-soft', '#F5DCD5');
+      root.style.setProperty('--accent-seal', '#DC2626');
+      root.style.setProperty('--accent-seal-soft', 'rgba(220, 38, 38, 0.15)');
+      root.style.setProperty('--accent-fg', '#FAFAFA');
     } else if (accent === 'graphite') {
-      root.style.setProperty('--accent-seal', '#7A8479');
-      root.style.setProperty('--accent-seal-soft', '#E2E5E1');
+      root.style.setProperty('--accent-seal', '#71717A');
+      root.style.setProperty('--accent-seal-soft', 'rgba(113, 113, 122, 0.15)');
+      root.style.setProperty('--accent-fg', '#FAFAFA');
     } else if (accent === 'ink') {
-      root.style.setProperty('--accent-seal', '#121A16');
-      root.style.setProperty('--accent-seal-soft', '#D5D8D6');
+      root.style.setProperty('--accent-seal', '#09090B');
+      root.style.setProperty('--accent-seal-soft', '#27272A');
+      root.style.setProperty('--accent-fg', '#FAFAFA');
     } else {
-      // seal default
-      root.style.setProperty('--accent-seal', '#2F6F52');
-      root.style.setProperty('--accent-seal-soft', '#CBDCD0');
+      // seal (STEALTH SILVER) default
+      root.style.setProperty('--accent-seal', '#E4E4E7');
+      root.style.setProperty('--accent-seal-soft', '#27272A');
+      root.style.setProperty('--accent-fg', '#09090B');
     }
 
     if (fontScale === 'S') {
@@ -406,7 +410,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onClick={() => setActiveTab(tab.id as SettingsTab)}
                 className={`px-3 py-1.5 rounded-keepeit border border-keepeit shrink-0 flex items-center gap-1.5 transition-colors ${
                   isSel
-                    ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                    ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                     : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                 }`}
               >
@@ -452,7 +456,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="space-y-2">
                 <label className="font-mono-label text-[var(--text-muted)] block">LETTER AVATAR COLOR</label>
                 <div className="flex items-center gap-2 flex-wrap">
-                  {['#2F6F52', '#B4472C', '#7A8479', '#121A16', '#2563EB', '#059669', '#7C3AED'].map((col) => (
+                  {['#27272A', '#E4E4E7', '#71717A', '#09090B', '#2563EB', '#DC2626', '#7C3AED'].map((col) => (
                     <button
                       key={col}
                       type="button"
@@ -477,15 +481,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
               <div className="pt-2 border-t border-keepeit flex items-center justify-between">
                 {accountSaved ? (
-                  <span className="text-emerald-600 font-mono text-xs flex items-center gap-1">
-                    <Check className="w-4 h-4" /> Account profile updated!
+                  <span className="text-zinc-400 font-mono text-xs flex items-center gap-1">
+                    <Check className="w-4 h-4 text-[var(--accent-seal)]" /> Account profile updated!
                   </span>
                 ) : (
                   <span />
                 )}
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90"
+                  className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
                 >
                   SAVE ACCOUNT PROFILE
                 </button>
@@ -508,7 +512,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     onClick={() => theme === 'dark' && onToggleTheme()}
                     className={`py-3 px-4 border border-keepeit rounded-keepeit font-mono-label text-xs flex items-center justify-center gap-2 ${
                       theme === 'light'
-                        ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                        ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                         : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                     }`}
                   >
@@ -519,7 +523,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     onClick={() => theme === 'light' && onToggleTheme()}
                     className={`py-3 px-4 border border-keepeit rounded-keepeit font-mono-label text-xs flex items-center justify-center gap-2 ${
                       theme === 'dark'
-                        ? 'bg-[var(--accent-seal)] text-white font-semibold'
+                        ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
                         : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                     }`}
                   >
@@ -536,10 +540,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono-label text-xs">
                   {[
-                    { id: 'seal', name: 'SEAL GREEN', hex: '#2F6F52' },
-                    { id: 'rust', name: 'RUST RED', hex: '#B4472C' },
-                    { id: 'graphite', name: 'GRAPHITE', hex: '#7A8479' },
-                    { id: 'ink', name: 'INK NAVY', hex: '#121A16' },
+                    { id: 'seal', name: 'STEALTH SILVER', hex: '#E4E4E7' },
+                    { id: 'rust', name: 'CRIMSON RUST', hex: '#DC2626' },
+                    { id: 'graphite', name: 'GRAPHITE ZINC', hex: '#71717A' },
+                    { id: 'ink', name: 'OBSIDIAN INK', hex: '#09090B' },
                   ].map((ac) => (
                     <button
                       key={ac.id}
@@ -573,7 +577,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       onClick={() => handleSelectFontScale(sc.id as any)}
                       className={`py-2 px-3 border border-keepeit rounded-keepeit text-center font-semibold transition-colors ${
                         fontScale === sc.id
-                          ? 'bg-[var(--accent-seal)] text-white'
+                          ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                           : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                       }`}
                     >
@@ -598,7 +602,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <span
                     className={`px-2 py-0.5 font-mono text-[10px] font-bold rounded-keepeit ${
                       hasPasskey
-                        ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                        ? 'bg-zinc-500/20 text-zinc-300 dark:text-zinc-200'
                         : isPasskeySupported
                         ? 'bg-gray-500/20 text-[var(--text-muted)]'
                         : 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
@@ -623,8 +627,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
 
                 {passkeyStatusMsg && (
-                  <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs rounded-keepeit flex items-center gap-2 font-mono">
-                    <Check className="w-4 h-4 shrink-0" />
+                  <div className="p-2.5 bg-[var(--bg-surface)] border border-zinc-500/30 text-[var(--text-primary)] text-xs rounded-keepeit flex items-center gap-2 font-mono">
+                    <Check className="w-4 h-4 shrink-0 text-[var(--accent-seal)]" />
                     <span>{passkeyStatusMsg}</span>
                   </div>
                 )}
@@ -643,7 +647,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       type="button"
                       disabled={isEnrollingPasskey}
                       onClick={handleEnrollPasskey}
-                      className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1.5 disabled:opacity-50"
+                      className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1.5 disabled:opacity-50"
                     >
                       <Fingerprint className="w-4 h-4" />
                       <span>{isEnrollingPasskey ? 'ENROLLING...' : 'ADD PASSKEY'}</span>
@@ -682,7 +686,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         onClick={() => updateSettings({ autoLockMinutes: mins })}
                         className={`py-2 rounded-keepeit border border-keepeit font-semibold transition-colors ${
                           isSel
-                            ? 'bg-[var(--accent-seal)] text-white'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                             : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                         }`}
                       >
@@ -709,7 +713,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         onClick={() => updateSettings({ clearClipboardSeconds: secs })}
                         className={`py-2 rounded-keepeit border border-keepeit font-semibold transition-colors ${
                           isSel
-                            ? 'bg-[var(--accent-seal)] text-white'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                             : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                         }`}
                       >
@@ -748,7 +752,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           setRecoveryCopied(true);
                           setTimeout(() => setRecoveryCopied(false), 2000);
                         }}
-                        className="px-2.5 py-1 bg-[var(--accent-seal)] text-white font-mono-label text-[10px] rounded-keepeit"
+                        className="px-2.5 py-1 bg-[var(--accent-seal)] text-[var(--accent-fg)] font-mono-label text-[10px] rounded-keepeit font-semibold"
                       >
                         {recoveryCopied ? 'COPIED' : 'COPY CODE'}
                       </button>
@@ -765,7 +769,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 shrink-0"
+                      className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] shrink-0"
                     >
                       REGENERATE
                     </button>
@@ -790,8 +794,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
 
                 {passwordStatus && (
-                  <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs rounded-keepeit flex items-center gap-2 font-mono">
-                    <Check className="w-4 h-4 shrink-0" />
+                  <div className="p-2.5 bg-[var(--bg-surface)] border border-zinc-500/30 text-[var(--text-primary)] text-xs rounded-keepeit flex items-center gap-2 font-mono">
+                    <Check className="w-4 h-4 shrink-0 text-[var(--accent-seal)]" />
                     <span>{passwordStatus}</span>
                   </div>
                 )}
@@ -830,7 +834,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <button
                   type="submit"
                   disabled={!newMasterPassword || !confirmMasterPassword}
-                  className="w-full py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 disabled:opacity-50"
+                  className="btn-stealth-primary w-full py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] disabled:opacity-50"
                 >
                   RE-ENCRYPT VAULT & CHANGE PASSWORD
                 </button>
@@ -863,7 +867,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       <span
                         className={`px-2 py-0.5 font-mono text-[10px] font-bold rounded-keepeit ${
                           storageEstimate?.persisted
-                            ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                            ? 'bg-zinc-500/20 text-zinc-300 dark:text-zinc-200'
                             : 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
                         }`}
                       >
@@ -920,7 +924,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <button
                   type="button"
                   onClick={exportBackup}
-                  className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 flex items-center gap-1.5"
+                  className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1.5"
                 >
                   <Download className="w-4 h-4" /> EXPORT ENCRYPTED BACKUP FILE
                 </button>
@@ -940,8 +944,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
 
                 {importBackupStatus && (
-                  <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs rounded-keepeit flex items-center gap-2 font-mono">
-                    <Check className="w-4 h-4 shrink-0" />
+                  <div className="p-2.5 bg-[var(--bg-surface)] border border-zinc-500/30 text-[var(--text-primary)] text-xs rounded-keepeit flex items-center gap-2 font-mono">
+                    <Check className="w-4 h-4 shrink-0 text-[var(--accent-seal)]" />
                     <span>{importBackupStatus}</span>
                   </div>
                 )}
@@ -967,7 +971,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <button
                   type="submit"
                   disabled={!backupFileContent || !backupMasterPassword}
-                  className="px-4 py-2 bg-[var(--accent-seal)] text-white font-mono-label text-xs font-semibold rounded-keepeit hover:opacity-90 disabled:opacity-50"
+                  className="btn-stealth-primary px-4 py-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] disabled:opacity-50"
                 >
                   RESTORE BACKUP
                 </button>
@@ -991,8 +995,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
 
                 {csvStatus && (
-                  <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 text-xs rounded-keepeit font-mono flex items-center gap-2">
-                    <Check className="w-4 h-4" />
+                  <div className="p-2 bg-[var(--bg-surface)] border border-zinc-500/30 text-[var(--text-primary)] text-xs rounded-keepeit font-mono flex items-center gap-2">
+                    <Check className="w-4 h-4 text-[var(--accent-seal)]" />
                     <span>{csvStatus}</span>
                   </div>
                 )}
@@ -1090,7 +1094,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div className="flex justify-between py-1">
                   <span className="text-[var(--text-muted)]">NETWORK AUDIT:</span>
-                  <span className="font-bold text-emerald-600">0 Network Calls (100% Offline)</span>
+                  <span className="font-bold text-[var(--accent-seal)]">0 Network Calls (100% Offline)</span>
                 </div>
               </div>
 

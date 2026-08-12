@@ -321,7 +321,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 font-mono-label bg-[var(--accent-seal)] text-white rounded-keepeit hover:opacity-90 font-semibold shadow-xs"
+              className="btn-stealth-primary px-5 py-2 font-mono-label bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] rounded-keepeit text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] shadow-xs"
             >
               {taskToEdit ? 'SAVE CHANGES' : 'CREATE TASK'}
             </button>

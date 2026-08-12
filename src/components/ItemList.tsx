@@ -91,7 +91,7 @@ export const ItemList: React.FC<ItemListProps> = ({
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'note':
-        return <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
+        return <FileText className="w-4 h-4 text-[var(--accent-seal)]" />;
       case 'credential':
         return <Key className="w-4 h-4 text-blue-600 dark:text-blue-400" />;
       case 'card':
@@ -161,7 +161,7 @@ export const ItemList: React.FC<ItemListProps> = ({
               ) : (
                 <button
                   onClick={onOpenNewItemModal}
-                  className="px-3 py-1.5 bg-[var(--accent-seal)] text-white rounded-keepeit text-xs font-mono-label font-semibold hover:opacity-90 flex items-center justify-center gap-1.5"
+                  className="px-3 py-1.5 bg-[var(--accent-seal)] text-[var(--accent-fg)] rounded-keepeit text-xs font-mono-label font-semibold hover:opacity-90 flex items-center justify-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
                   <span>CREATE FIRST ITEM</span>

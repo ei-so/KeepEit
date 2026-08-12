@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useVault } from '../hooks/useVault';
 import { evaluatePasswordStrength, generateRecoveryCode } from '../lib/crypto';
+import { Logo } from './Logo';
 import {
   Lock,
   ShieldCheck,
@@ -250,14 +251,14 @@ export const UnlockScreen: React.FC = () => {
       >
         {/* Header Branding */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-keepeit bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] mb-3">
-            <Lock className="w-6 h-6" />
+          <div className="inline-flex items-center justify-center mb-3">
+            <Logo size="lg" />
           </div>
           <h1 className="text-2xl font-display font-bold text-[var(--text-primary)]">
             KeepEit
           </h1>
           <p className="text-xs font-mono-label text-[var(--text-muted)] mt-1">
-            Developer: Kurt Ross Gonzaga • Version 1.0.0
+            Developer: Kurt Ross
           </p>
         </div>
 
@@ -374,7 +375,7 @@ export const UnlockScreen: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full mt-2 bg-[var(--accent-seal)] text-white font-mono-label font-semibold py-2.5 px-4 rounded-keepeit hover:opacity-90 transition-opacity flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)] focus-visible:ring-offset-2"
+                  className="btn-stealth-primary w-full mt-2 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label font-semibold py-2.5 px-4 rounded-keepeit transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
                 >
                   <KeyRound className="w-4 h-4" />
                   <span>GENERATE RECOVERY CODE</span>
@@ -399,7 +400,7 @@ export const UnlockScreen: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleCopyRecoveryCode}
-                      className="px-2.5 py-1.5 bg-[var(--accent-seal)] text-white font-mono-label text-[10px] rounded-keepeit hover:opacity-90 flex items-center gap-1 shrink-0"
+                      className="px-2.5 py-1.5 bg-[var(--accent-seal)] text-[var(--accent-fg)] font-mono-label text-[10px] rounded-keepeit hover:opacity-90 flex items-center gap-1 shrink-0 font-bold"
                     >
                       {copiedCode ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedCode ? 'COPIED' : 'COPY'}</span>
@@ -430,10 +431,10 @@ export const UnlockScreen: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!recoverySaved || isLoading}
-                    className={`flex-1 font-mono-label font-semibold py-2.5 px-4 rounded-keepeit text-white transition-all flex items-center justify-center gap-2 ${
+                    className={`flex-1 font-mono-label font-semibold py-2.5 px-4 rounded-keepeit transition-all flex items-center justify-center gap-2 ${
                       recoverySaved && !isLoading
-                        ? 'bg-[var(--accent-seal)] hover:opacity-90'
-                        : 'bg-gray-400 dark:bg-gray-700 cursor-not-allowed opacity-60'
+                        ? 'btn-stealth-primary bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]'
+                        : 'bg-gray-400 dark:bg-gray-700 text-zinc-400 cursor-not-allowed opacity-60'
                     }`}
                   >
                     <ShieldCheck className="w-4 h-4" />
@@ -468,7 +469,7 @@ export const UnlockScreen: React.FC = () => {
                   type="button"
                   disabled={cooldownSeconds > 0 || isLoading}
                   onClick={handleUnlockPasskey}
-                  className="w-full bg-[var(--accent-seal)] text-white font-mono-label font-semibold py-3 px-4 rounded-keepeit hover:opacity-90 transition-opacity flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                  className="btn-stealth-primary w-full bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label font-semibold py-3 px-4 rounded-keepeit transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                 >
                   <Fingerprint className="w-5 h-5" />
                   <span>{isLoading ? 'AUTHENTICATING...' : 'UNLOCK WITH PASSKEY'}</span>
@@ -547,7 +548,7 @@ export const UnlockScreen: React.FC = () => {
                 <button
                   type="submit"
                   disabled={cooldownSeconds > 0 || isLoading}
-                  className="w-full bg-[var(--accent-seal)] text-white font-mono-label font-semibold py-2.5 px-4 rounded-keepeit hover:opacity-90 transition-opacity flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-stealth-primary w-full bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label font-semibold py-2.5 px-4 rounded-keepeit transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <KeyRound className="w-4 h-4" />
                   <span>{isLoading ? 'DECRYPTING...' : 'UNLOCK VAULT'}</span>
@@ -608,7 +609,7 @@ export const UnlockScreen: React.FC = () => {
                 <button
                   type="submit"
                   disabled={cooldownSeconds > 0 || isLoading}
-                  className="w-full bg-[var(--accent-seal)] text-white font-mono-label font-semibold py-2.5 px-4 rounded-keepeit hover:opacity-90 transition-opacity flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-stealth-primary w-full bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label font-semibold py-2.5 px-4 rounded-keepeit transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <LifeBuoy className="w-4 h-4" />
                   <span>{isLoading ? 'VERIFYING...' : 'UNLOCK WITH RECOVERY CODE'}</span>
@@ -643,11 +644,11 @@ export const UnlockScreen: React.FC = () => {
             </div>
           </div>
         )}
-
-        {/* Honest Demo Disclaimer in Mono (Exact phrase requested) */}
+        
+      {/* Honest Demo Disclaimer in Mono (Exact phrase requested) */}
         <div className="mt-6 pt-4 border-t border-keepeit text-center">
           <p className="font-mono text-[10px] text-[var(--text-muted)] leading-relaxed">
-            Demo project — encrypted locally with AES-256-GCM. Not audited; don't store real credentials.
+            Real project — encrypted locally with AES-256-GCM.
           </p>
         </div>
       </div>
