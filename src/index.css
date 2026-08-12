@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --ink: #121A16;
+    --paper: #E9EBE4;
+    --seal: #2F6F52;
+    --seal-soft: #CBDCD0;
+    --rust: #B4472C;
+    --graphite: #7A8479;
+
+    --bg-main: #E9EBE4;
+    --bg-surface: #F2F4EE;
+    --bg-surface-hover: #DFE2DA;
+    --bg-card: #FFFFFF;
+    --text-primary: #121A16;
+    --text-muted: #7A8479;
+    --border-color: rgba(122, 132, 121, 0.25);
+    --accent-seal: #2F6F52;
+    --accent-seal-soft: #CBDCD0;
+    --accent-rust: #B4472C;
+  }
+
+  .dark {
+    --bg-main: #121A16;
+    --bg-surface: #1A241F;
+    --bg-surface-hover: #233029;
+    --bg-card: #16201B;
+    --text-primary: #E9EBE4;
+    --text-muted: #9CA59B;
+    --border-color: rgba(122, 132, 121, 0.25);
+    --accent-seal: #388462;
+    --accent-seal-soft: rgba(47, 111, 82, 0.35);
+    --accent-rust: #D95A3F;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Custom Font utility classes */
+  .font-display {
+    font-family: 'Familjen Grotesk', 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono-label {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.725rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* 6px Radius requirement */
+  .rounded-keepeit {
+    border-radius: 6px;
+  }
+
+  /* 1px graphite 25% opacity border */
+  .border-keepeit {
+    border: 1px solid var(--border-color);
+  }
+
+  /* Visible focus ring on interactive elements */
+  *:focus-visible {
+    outline: 2px solid var(--accent-seal);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
