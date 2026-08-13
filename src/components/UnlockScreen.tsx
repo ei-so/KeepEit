@@ -33,6 +33,7 @@ export const UnlockScreen: React.FC = () => {
 
   // Setup state
   const [setupStep, setSetupStep] = useState<1 | 2>(1);
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [hint, setHint] = useState('');
@@ -84,6 +85,11 @@ export const UnlockScreen: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null);
 
+    if (!userName.trim()) {
+      setErrorMessage('Your display name is required.');
+      handleTriggerShake();
+      return;
+    }
     if (!password) {
       setErrorMessage('Master password is required.');
       handleTriggerShake();
@@ -118,7 +124,7 @@ export const UnlockScreen: React.FC = () => {
 
     try {
       setIsLoading(true);
-      await createVault(password, hint.trim() || undefined);
+      await createVault(password, hint.trim() || undefined, userName.trim() || undefined);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to initialize encrypted vault.');
       handleTriggerShake();
@@ -229,6 +235,7 @@ export const UnlockScreen: React.FC = () => {
       setIsLoading(true);
       await wipeVault();
       setShowWipeConfirm(false);
+      setUserName('');
       setPassword('');
       setConfirmPassword('');
       setHint('');
@@ -298,6 +305,21 @@ export const UnlockScreen: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-mono-label text-[var(--text-muted)] mb-1">
+                    YOUR NAME
+                  </label>
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    placeholder="e.g., Juan Dela Cruz"
+                    className="w-full bg-[var(--bg-surface)] border-keepeit rounded-keepeit px-3 py-2 text-sm text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)]"
+                    autoFocus
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono-label text-[var(--text-muted)] mb-1">
                     CREATE MASTER PASSWORD
                   </label>
                   <div className="relative">
@@ -307,7 +329,6 @@ export const UnlockScreen: React.FC = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Minimum 8 characters..."
                       className="w-full bg-[var(--bg-surface)] border-keepeit rounded-keepeit px-3 py-2 text-sm text-[var(--text-primary)] pr-10 focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)]"
-                      autoFocus
                     />
                     <button
                       type="button"

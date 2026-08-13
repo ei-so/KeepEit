@@ -24,7 +24,7 @@ interface VaultContextType {
   hasPasskey: boolean;
   autosaveState: 'idle' | 'saving' | 'saved';
   setAutosaveState: (state: 'idle' | 'saving' | 'saved') => void;
-  createVault: (password: string, hint?: string) => Promise<{ recoveryCode: string }>;
+  createVault: (password: string, hint?: string, displayName?: string) => Promise<{ recoveryCode: string }>;
   unlockVault: (password: string) => Promise<void>;
   unlockWithRecoveryCode: (code: string) => Promise<void>;
   unlockWithPasskey: () => Promise<void>;
@@ -205,12 +205,15 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     setLockCountdownSeconds(autoLockMinutes * 60);
   };
 
-  const createVault = async (password: string, hint?: string) => {
-    const res = await store.create(password, hint);
+  const createVault = async (password: string, hint?: string, displayName?: string) => {
+    const res = await store.create(password, hint, displayName);
     setHasVault(true);
     setVaultData(res.vault);
     setIsUnlocked(true);
     setPasswordHint(hint);
+    if (displayName) {
+      localStorage.setItem('keepeit_user_name', displayName.trim());
+    }
     resetTimer();
     return { recoveryCode: res.recoveryCode };
   };
@@ -626,11 +629,14 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   const updateAccountProfile = async (profile: Partial<{ displayName: string; avatarColor: string }>) => {
     const updated = await store.mutate((data) => {
       data.accountProfile = {
-        displayName: profile.displayName ?? data.accountProfile?.displayName ?? 'Kurt Ross Gonzaga',
+        displayName: profile.displayName ?? data.accountProfile?.displayName ?? 'Vault User',
         avatarColor: profile.avatarColor ?? data.accountProfile?.avatarColor ?? '#27272A',
       };
     });
     setVaultData(updated);
+    if (profile.displayName) {
+      localStorage.setItem('keepeit_user_name', profile.displayName.trim());
+    }
     resetTimer();
   };
 

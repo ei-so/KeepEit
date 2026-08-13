@@ -141,7 +141,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   useEffect(() => {
     if (vaultData) {
-      setDisplayName(vaultData.accountProfile?.displayName || 'Kurt Ross Gonzaga');
+      const storedName = typeof window !== 'undefined' ? localStorage.getItem('keepeit_user_name') : null;
+      setDisplayName(vaultData.accountProfile?.displayName || storedName || '');
       setAvatarColor(vaultData.accountProfile?.avatarColor || '#27272A');
       setAccent(vaultData.settings?.accent || 'seal');
       setFontScale(vaultData.settings?.fontScale || 'M');
@@ -194,6 +195,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const handleSaveAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateAccountProfile({ displayName, avatarColor });
+    if (displayName) {
+      localStorage.setItem('keepeit_user_name', displayName.trim());
+    }
     setAccountSaved(true);
     setTimeout(() => setAccountSaved(false), 2000);
   };
@@ -435,7 +439,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <h4 className="font-bold text-sm text-[var(--text-primary)]">{displayName || 'Kurt Ross Gonzaga'}</h4>
+                  <h4 className="font-bold text-sm text-[var(--text-primary)]">{displayName || 'Vault User'}</h4>
                   <p className="text-[10px] font-mono text-[var(--text-muted)]">
                     Zero-knowledge profile avatar and display label.
                   </p>
@@ -448,7 +452,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Your Name..."
+                  placeholder="e.g., Juan Dela Cruz"
                   className="w-full bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 text-xs font-sans text-[var(--text-primary)]"
                 />
               </div>

@@ -125,7 +125,8 @@ export async function exists(): Promise<boolean> {
  */
 export async function create(
   password: string,
-  hint?: string
+  hint?: string,
+  displayName?: string
 ): Promise<{ recoveryCode: string; vault: VaultData }> {
   // 1. Generate random 256-bit DEK
   const rawDek = crypto.getRandomValues(new Uint8Array(32));
@@ -140,6 +141,10 @@ export async function create(
   const initialVaultData: VaultData = {
     version: '1.0.0',
     developer: 'Kurt Ross Gonzaga',
+    accountProfile: {
+      displayName: displayName?.trim() || 'Vault User',
+      avatarColor: '#27272A',
+    },
     items: [],
     folders: [],
     tags: [],

@@ -33,7 +33,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
   // 1. Greeting & Time of Day
   const hour = new Date().getHours();
   const greetingTime = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  const displayName = vaultData.accountProfile?.displayName || 'Kurt Ross Gonzaga';
+  const storedName = typeof window !== 'undefined' ? localStorage.getItem('keepeit_user_name') : null;
+  const displayName = vaultData.accountProfile?.displayName || storedName || 'Vault User';
 
   // 2. Three Count Cards
   const credentialCount = vaultData.items.filter((i) => i.category === 'credential').length;
