@@ -154,7 +154,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
               <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase">
                 ENCRYPTED CREDENTIALS
               </span>
-              <div className="w-8 h-8 rounded-full bg-[var(--accent-seal-soft)]/30 text-[var(--accent-seal)] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-[var(--accent-seal)] text-[var(--accent-fg)] flex items-center justify-center">
                 <Shield className="w-4 h-4" />
               </div>
             </div>
@@ -270,7 +270,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
                   <ShieldCheck className="w-4 h-4 text-[var(--accent-seal)]" />
                   Vault Protection Score
                 </h3>
-                <span className="font-mono text-sm font-bold text-[var(--accent-seal)] bg-[var(--accent-seal-soft)]/40 px-2 py-0.5 rounded-keepeit">
+                <span className="font-mono text-sm font-bold text-[var(--accent-fg)] bg-[var(--accent-seal)] px-2 py-0.5 rounded-keepeit">
                   {protectionScore}/3 SCORE
                 </span>
               </div>

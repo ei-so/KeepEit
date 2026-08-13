@@ -40,6 +40,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onNavigate,
 }) => {
   const { vaultData } = useVault();
+  const isInk = vaultData?.settings?.accent === 'ink';
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -234,12 +235,14 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`p-3 rounded-keepeit cursor-pointer flex items-center justify-between gap-3 transition-colors ${
                     isSelected
-                      ? 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold'
+                      ? isInk
+                        ? 'bg-[var(--accent-seal-soft)] text-white font-semibold'
+                        : 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold'
                       : 'hover:bg-[var(--bg-surface-hover)] text-[var(--text-primary)]'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <Icon className="w-4 h-4 shrink-0 text-[var(--accent-seal)]" />
+                    <Icon className={`w-4 h-4 shrink-0 ${isSelected && isInk ? 'text-white' : 'text-[var(--accent-seal)]'}`} />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="truncate font-sans font-bold text-xs">{item.title}</span>

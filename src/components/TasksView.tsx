@@ -350,7 +350,7 @@ export const TasksView: React.FC = () => {
       <div className="p-4 bg-[var(--bg-card)] border-b border-keepeit space-y-3 shrink-0">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <CheckSquare className="w-5 h-5 text-[var(--accent-seal)]" />
+            <CheckSquare className={`w-5 h-5 ${vaultData?.settings?.accent === 'ink' ? 'text-white' : 'text-[var(--accent-seal)]'}`} />
             <h2 className="font-display font-bold text-base text-[var(--text-primary)]">
               TASK WORKSPACE
             </h2>
@@ -361,13 +361,13 @@ export const TasksView: React.FC = () => {
               onClick={() => setIsFolderManagerOpen(true)}
               className="px-3 py-1.5 border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)] hover:bg-[var(--bg-surface)] flex items-center gap-1.5"
             >
-              <FolderPlus className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
+              <FolderPlus className={`w-3.5 h-3.5 ${vaultData?.settings?.accent === 'ink' ? 'text-white' : 'text-[var(--accent-seal)]'}`} />
               <span>FOLDERS</span>
             </button>
 
             <button
               onClick={() => handleOpenNewModal('todo')}
-              className="btn-stealth-primary px-3.5 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-xs font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1.5 shadow-xs"
+              className="btn-stealth-primary px-3.5 py-1.5 border border-zinc-700/60 active:scale-[0.98] text-xs font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 flex items-center gap-1.5 shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>NEW TASK</span>

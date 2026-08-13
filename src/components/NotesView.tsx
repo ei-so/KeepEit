@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NoteItem, Folder } from '../types/vault';
 import { useVault } from '../hooks/useVault';
 import { useToast } from './Toast';
-import { MarkdownPreview } from './MarkdownPreview';
 import { FolderManagerModal } from './FolderManagerModal';
+import { markdownToHtml, stripHtmlAndMarkdown } from '../lib/markdown';
 import {
   FileText,
   Plus,
@@ -15,8 +15,6 @@ import {
   Copy,
   Trash2,
   FolderInput,
-  Eye,
-  Edit3,
   Heading1,
   Heading2,
   Heading3,
@@ -38,6 +36,7 @@ import {
 export const NotesView: React.FC = () => {
   const { vaultData, addItem, updateItem, deleteItem, toggleFavorite, setAutosaveState, autosaveState, addTag } = useVault();
   const { showToast } = useToast();
+  const isInk = vaultData?.settings?.accent === 'ink';
 
   // Navigation Filter State (Pane 1)
   const [activeFilter, setActiveFilter] = useState<'all' | 'favorites'>('all');
@@ -65,9 +64,9 @@ export const NotesView: React.FC = () => {
   // Tag Input State
   const [tagInput, setTagInput] = useState('');
 
-  // Refs for autosave timer & textarea ref
+  // Refs for autosave timer & contenteditable editor ref
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const editorRef = useRef<HTMLDivElement | null>(null);
   const isInitialLoadRef = useRef(true);
 
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -119,18 +118,33 @@ export const NotesView: React.FC = () => {
     if (currentNote) {
       isInitialLoadRef.current = true;
       setEditorTitle(currentNote.title || '');
-      setEditorContent(currentNote.content || '');
+      const htmlVal = markdownToHtml(currentNote.content || '');
+      setEditorContent(htmlVal);
+      if (editorRef.current) {
+        editorRef.current.innerHTML = htmlVal;
+      }
       setEditorFolderId(currentNote.folderId);
       setEditorTags(currentNote.tags || []);
       setEditorIsFavorite(currentNote.isFavorite || false);
     } else {
       setEditorTitle('');
       setEditorContent('');
+      if (editorRef.current) {
+        editorRef.current.innerHTML = '';
+      }
       setEditorFolderId(undefined);
       setEditorTags([]);
       setEditorIsFavorite(false);
     }
   }, [selectedNoteId]);
+
+  // Sync contenteditable innerHTML on mount / initial load
+  useEffect(() => {
+    if (editorRef.current && isInitialLoadRef.current) {
+      editorRef.current.innerHTML = editorContent;
+      isInitialLoadRef.current = false;
+    }
+  }, [editorContent]);
 
   // Debounced 800ms Autosave Handler
   const triggerAutosave = useCallback(
@@ -178,10 +192,11 @@ export const NotesView: React.FC = () => {
     triggerAutosave(val, editorContent, editorFolderId, editorTags, editorIsFavorite);
   };
 
-  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    setEditorContent(val);
-    triggerAutosave(editorTitle, val, editorFolderId, editorTags, editorIsFavorite);
+  const handleEditorInput = () => {
+    if (!editorRef.current) return;
+    const html = editorRef.current.innerHTML;
+    setEditorContent(html);
+    triggerAutosave(editorTitle, html, editorFolderId, editorTags, editorIsFavorite);
   };
 
   const handleFolderChange = (folderIdVal?: string) => {
@@ -222,7 +237,7 @@ export const NotesView: React.FC = () => {
     const newNotePayload = {
       category: 'note' as const,
       title: 'Untitled Note',
-      content: '# New Note\n\nStart typing your encrypted markdown notes here...',
+      content: '',
       format: 'markdown' as const,
       folderId: selectedFolderId || undefined,
       tags: selectedTag ? [selectedTag] : [],
@@ -293,52 +308,39 @@ export const NotesView: React.FC = () => {
     }, 100);
   };
 
-  // Formatting Toolbar Helper for Textarea
-  const insertFormatting = (prefix: string, suffix: string = '') => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = editorContent.substring(start, end);
-
-    let replacement = '';
-    let cursorStart = start;
-    let cursorEnd = start;
-
-    if (selectedText.length > 0) {
-      replacement = `${prefix}${selectedText}${suffix}`;
-      cursorStart = start + prefix.length;
-      cursorEnd = start + prefix.length + selectedText.length;
-    } else {
-      replacement = `${prefix}${suffix}`;
-      cursorStart = start + prefix.length;
-      cursorEnd = start + prefix.length;
+  // Formatting Helper for Rich Text contenteditable
+  const applyFormat = (command: string, value: string | null = null) => {
+    if (editorRef.current) {
+      editorRef.current.focus();
     }
-
-    const newContent =
-      editorContent.substring(0, start) + replacement + editorContent.substring(end);
-    setEditorContent(newContent);
-    triggerAutosave(editorTitle, newContent, editorFolderId, editorTags, editorIsFavorite);
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(cursorStart, cursorEnd);
-    }, 50);
+    if (command === 'createLink') {
+      const url = prompt('Enter link URL:', 'https://');
+      if (url) {
+        document.execCommand('createLink', false, url);
+      }
+    } else if (command === 'code') {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+        if (selectedText) {
+          const codeElem = document.createElement('code');
+          codeElem.textContent = selectedText;
+          range.deleteContents();
+          range.insertNode(codeElem);
+        } else {
+          document.execCommand('formatBlock', false, '<pre>');
+        }
+      }
+    } else {
+      document.execCommand(command, false, value ?? undefined);
+    }
+    handleEditorInput();
   };
 
-  // Helper to strip markdown from first line for list preview
+  // Helper to strip markdown and HTML from first line for list preview
   const getFirstLinePreview = (content: string) => {
-    if (!content) return 'No content';
-    const firstLine = content.split('\n').find((l) => l.trim().length > 0) || '';
-    return firstLine
-      .replace(/^#+\s*/, '')
-      .replace(/^[\-\*]\s*/, '')
-      .replace(/^\d+\.\s*/, '')
-      .replace(/^>\s*/, '')
-      .replace(/`{1,3}/g, '')
-      .replace(/\*\*|\*|~~/g, '')
-      .trim();
+    return stripHtmlAndMarkdown(content);
   };
 
   return (
@@ -351,14 +353,14 @@ export const NotesView: React.FC = () => {
         }`}>
           <div className="p-3.5 border-b border-keepeit flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[var(--accent-seal)]" />
+              <FileText className={`w-4 h-4 ${isInk ? 'text-white' : 'text-[var(--accent-seal)]'}`} />
               <span className="font-display font-bold text-sm text-[var(--text-primary)]">
                 NOTES ENGINE
               </span>
             </div>
             <button
               onClick={handleCreateNewNote}
-              className="btn-stealth-primary px-2.5 py-1 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] text-[11px] font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center gap-1 shadow-xs"
+              className="btn-stealth-primary px-2.5 py-1 border border-zinc-700/60 active:scale-[0.98] text-[11px] font-mono-label font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 flex items-center gap-1 shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>NEW</span>
@@ -402,15 +404,21 @@ export const NotesView: React.FC = () => {
                 }}
                 className={`w-full text-left px-2.5 py-1.5 rounded-keepeit flex items-center justify-between transition-colors ${
                   activeFilter === 'all' && !selectedFolderId && !selectedTag
-                    ? 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-bold'
+                    ? isInk
+                      ? 'bg-[var(--accent-seal-soft)] text-white font-bold'
+                      : 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-bold'
                     : 'text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <FileText className="w-3.5 h-3.5" />
+                  <FileText className={`w-3.5 h-3.5 ${activeFilter === 'all' && !selectedFolderId && !selectedTag && isInk ? 'text-white' : ''}`} />
                   <span>All Notes</span>
                 </div>
-                <span className="text-[10px] text-[var(--text-muted)]">{allNotes.length}</span>
+                <span className={`text-[10px] ${
+                  activeFilter === 'all' && !selectedFolderId && !selectedTag && isInk
+                    ? 'px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono font-bold'
+                    : 'text-[var(--text-muted)]'
+                }`}>{allNotes.length}</span>
               </button>
 
               <button
@@ -421,7 +429,9 @@ export const NotesView: React.FC = () => {
                 }}
                 className={`w-full text-left px-2.5 py-1.5 rounded-keepeit flex items-center justify-between transition-colors ${
                   activeFilter === 'favorites'
-                    ? 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-bold'
+                    ? isInk
+                      ? 'bg-[var(--accent-seal-soft)] text-white font-bold'
+                      : 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-bold'
                     : 'text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                 }`}
               >
@@ -429,7 +439,11 @@ export const NotesView: React.FC = () => {
                   <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                   <span>Favorites</span>
                 </div>
-                <span className="text-[10px] text-[var(--text-muted)]">
+                <span className={`text-[10px] ${
+                  activeFilter === 'favorites' && isInk
+                    ? 'px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono font-bold'
+                    : 'text-[var(--text-muted)]'
+                }`}>
                   {allNotes.filter((n) => n.isFavorite).length}
                 </span>
               </button>
@@ -441,7 +455,7 @@ export const NotesView: React.FC = () => {
                 <span className="text-[10px] font-mono-label text-[var(--text-muted)]">FOLDERS</span>
                 <button
                   onClick={() => setIsFolderManagerOpen(true)}
-                  className="text-[10px] font-mono-label text-[var(--accent-seal)] hover:underline flex items-center gap-0.5"
+                  className={`text-[10px] font-mono-label ${isInk ? 'text-white' : 'text-[var(--accent-seal)]'} hover:underline flex items-center gap-0.5`}
                 >
                   <FolderPlus className="w-3 h-3" />
                   <span>MANAGE</span>
@@ -462,7 +476,9 @@ export const NotesView: React.FC = () => {
                     }}
                     className={`w-full text-left px-2.5 py-1.5 rounded-keepeit flex items-center justify-between transition-colors ${
                       isSelected
-                        ? 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-bold'
+                        ? isInk
+                          ? 'bg-[var(--accent-seal-soft)] text-white font-bold'
+                          : 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-bold'
                         : 'text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                     }`}
                   >
@@ -473,7 +489,11 @@ export const NotesView: React.FC = () => {
                       />
                       <span className="truncate">{folder.name}</span>
                     </div>
-                    <span className="text-[10px] text-[var(--text-muted)]">{count}</span>
+                    <span className={`text-[10px] ${
+                      isSelected && isInk
+                        ? 'px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono font-bold'
+                        : 'text-[var(--text-muted)]'
+                    }`}>{count}</span>
                   </button>
                 );
               })}
@@ -683,14 +703,14 @@ export const NotesView: React.FC = () => {
               <div className="p-3 border-b border-keepeit bg-[var(--bg-card)] space-y-3 shrink-0">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    {/* Mobile Back Button - Always fully active */}
+                    {/* Mobile Back Button - Single Arrow */}
                     <button
                       onClick={() => setSelectedNoteId(null)}
-                      className="md:hidden flex items-center gap-1 text-xs font-mono-label text-[var(--accent-seal)] font-semibold px-2.5 py-1.5 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit shrink-0 min-h-[36px] opacity-100 hover:bg-[var(--bg-surface-hover)] active:scale-95 cursor-pointer"
+                      className="md:hidden flex items-center gap-1.5 text-xs font-mono-label text-[var(--accent-seal)] font-semibold px-2.5 py-1.5 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit shrink-0 min-h-[36px] opacity-100 hover:bg-[var(--bg-surface-hover)] active:scale-95 cursor-pointer"
                       title="Return to Notes List"
                     >
                       <ArrowLeft className="w-4 h-4 text-[var(--accent-seal)]" />
-                      <span>← BACK</span>
+                      <span>BACK</span>
                     </button>
 
                     {/* Title Field */}
@@ -699,12 +719,12 @@ export const NotesView: React.FC = () => {
                       type="text"
                       value={editorTitle}
                       onChange={handleTitleChange}
-                      placeholder="Note Title..."
-                      className="flex-1 bg-transparent font-display font-bold text-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-seal)] rounded-keepeit px-2 py-1 min-w-0"
+                      placeholder="Untitled Note"
+                      className="flex-1 bg-transparent font-bold text-xl md:text-2xl text-[var(--text-primary)] placeholder:text-[var(--text-muted)] border-none outline-none focus:outline-none min-w-0 px-1 py-1"
                     />
                   </div>
 
-                  {/* Actions, Status & View Toggle */}
+                  {/* Actions & Status */}
                   <div className="flex items-center gap-2 shrink-0">
                     {/* Status Indicator */}
                     <div className="flex items-center gap-1 text-[10px] font-mono px-2 py-1 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit shrink-0">
@@ -728,32 +748,6 @@ export const NotesView: React.FC = () => {
                       <Plus className="w-4 h-4" />
                     </button>
 
-                    {/* Mode Toggle */}
-                    <div className="flex items-center bg-[var(--bg-surface)] border-keepeit rounded-keepeit p-0.5 text-xs font-mono">
-                      <button
-                        onClick={() => setViewMode('write')}
-                        className={`px-2.5 py-1 rounded-keepeit transition-colors flex items-center gap-1.5 ${
-                          viewMode === 'write'
-                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
-                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                        }`}
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Write</span>
-                      </button>
-                      <button
-                        onClick={() => setViewMode('preview')}
-                        className={`px-2.5 py-1 rounded-keepeit transition-colors flex items-center gap-1.5 ${
-                          viewMode === 'preview'
-                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
-                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                        }`}
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Preview</span>
-                      </button>
-                    </div>
-
                     <button
                       onClick={handleToggleFav}
                       className={`p-1.5 rounded-keepeit ${
@@ -776,96 +770,123 @@ export const NotesView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Sub-toolbar: Formatting Tools (In Write Mode), Folder Select & Tags */}
+                {/* Sub-toolbar: Formatting Tools, Folder Select & Tags */}
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono pt-1 border-t border-keepeit">
-                  {/* Formatting Buttons (Write Mode Only) */}
-                  {viewMode === 'write' ? (
-                    <div className="flex items-center gap-1 flex-wrap text-[var(--text-muted)]">
-                      <button
-                        onClick={() => insertFormatting('# ')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Heading 1"
-                      >
-                        <Heading1 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('## ')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Heading 2"
-                      >
-                        <Heading2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('### ')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Heading 3"
-                      >
-                        <Heading3 className="w-3.5 h-3.5" />
-                      </button>
-                      <div className="h-3 w-px bg-keepeit mx-1" />
-                      <button
-                        onClick={() => insertFormatting('**', '**')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Bold"
-                      >
-                        <Bold className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('*', '*')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Italic"
-                      >
-                        <Italic className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('~~', '~~')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Strikethrough"
-                      >
-                        <Strikethrough className="w-3.5 h-3.5" />
-                      </button>
-                      <div className="h-3 w-px bg-keepeit mx-1" />
-                      <button
-                        onClick={() => insertFormatting('- ')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Bullet List"
-                      >
-                        <List className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('1. ')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Numbered List"
-                      >
-                        <ListOrdered className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('[', '](https://)')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Link"
-                      >
-                        <LinkIcon className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('`', '`')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Inline Code"
-                      >
-                        <Code className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => insertFormatting('> ')}
-                        className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
-                        title="Blockquote"
-                      >
-                        <Quote className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ) : (
-                    <span className="text-[10px] font-mono-label text-[var(--accent-seal)] font-semibold">
-                      MARKDOWN PREVIEW ACTIVE
-                    </span>
-                  )}
+                  {/* Formatting Buttons */}
+                  <div className="flex items-center gap-1 flex-wrap text-[var(--text-muted)]">
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('formatBlock', '<h1>');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Heading 1"
+                    >
+                      <Heading1 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('formatBlock', '<h2>');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Heading 2"
+                    >
+                      <Heading2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('formatBlock', '<h3>');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Heading 3"
+                    >
+                      <Heading3 className="w-3.5 h-3.5" />
+                    </button>
+                    <div className="h-3 w-px bg-keepeit mx-1" />
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('bold');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Bold"
+                    >
+                      <Bold className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('italic');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Italic"
+                    >
+                      <Italic className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('strikeThrough');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Strikethrough"
+                    >
+                      <Strikethrough className="w-3.5 h-3.5" />
+                    </button>
+                    <div className="h-3 w-px bg-keepeit mx-1" />
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('insertUnorderedList');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Bullet List"
+                    >
+                      <List className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('insertOrderedList');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Numbered List"
+                    >
+                      <ListOrdered className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('createLink');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Link"
+                    >
+                      <LinkIcon className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('code');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Inline Code"
+                    >
+                      <Code className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        applyFormat('formatBlock', 'blockquote');
+                      }}
+                      className="p-1 hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit cursor-pointer"
+                      title="Blockquote"
+                    >
+                      <Quote className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
                   {/* Folder Selector & Tags Control */}
                   <div className="flex items-center gap-2">
@@ -923,17 +944,23 @@ export const NotesView: React.FC = () => {
 
               {/* Note Content Viewport */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[var(--bg-card)]">
-                {viewMode === 'write' ? (
-                  <textarea
-                    ref={textareaRef}
-                    value={editorContent}
-                    onChange={handleContentChange}
-                    placeholder="Write your note in markdown syntax..."
-                    className="w-full h-full min-h-[350px] bg-transparent text-sm font-mono text-[var(--text-primary)] focus:outline-none resize-none leading-relaxed"
+                <div className="relative w-full h-full min-h-[350px]">
+                  {(!editorContent ||
+                    editorContent === '<br>' ||
+                    editorContent === '<p><br></p>' ||
+                    editorContent.trim() === '') && (
+                    <div className="absolute top-0 left-0 text-[var(--text-muted)] pointer-events-none select-none leading-relaxed">
+                      Start typing your note here...
+                    </div>
+                  )}
+                  <div
+                    ref={editorRef}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={handleEditorInput}
+                    className="rich-editor-content min-h-[300px] w-full outline-none leading-relaxed text-neutral-800 dark:text-neutral-100 bg-transparent focus:outline-none"
                   />
-                ) : (
-                  <MarkdownPreview content={editorContent} />
-                )}
+                </div>
               </div>
             </div>
           )}

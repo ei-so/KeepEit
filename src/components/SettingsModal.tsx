@@ -172,7 +172,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     } else if (accent === 'ink') {
       root.style.setProperty('--accent-seal', '#09090B');
       root.style.setProperty('--accent-seal-soft', '#27272A');
-      root.style.setProperty('--accent-fg', '#FAFAFA');
+      root.style.setProperty('--accent-fg', '#FFFFFF');
     } else {
       // seal (STEALTH SILVER) default
       root.style.setProperty('--accent-seal', '#E4E4E7');
@@ -386,7 +386,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-keepeit pb-3 shrink-0">
           <h3 className="font-display font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
-            <SlidersHorizontal className="w-5 h-5 text-[var(--accent-seal)]" />
+            <SlidersHorizontal className={`w-5 h-5 ${accent === 'ink' ? 'text-white' : 'text-[var(--accent-seal)]'}`} />
             Vault Preferences & Settings
           </h3>
           <button
@@ -1067,7 +1067,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {activeTab === 'about' && (
             <div className="space-y-5">
               <div className="p-6 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit text-center space-y-3">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--accent-seal-soft)] text-[var(--accent-seal)]">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--accent-seal)] text-[var(--accent-fg)]">
                   <Shield className="w-6 h-6" />
                 </div>
                 <div>

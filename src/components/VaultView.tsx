@@ -181,7 +181,7 @@ export const VaultView: React.FC = () => {
       {/* Top Controls Toolbar */}
       <div className="p-4 border-b border-keepeit bg-[var(--bg-card)] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-keepeit bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] shrink-0">
+          <div className="p-2 rounded-keepeit bg-[var(--accent-seal)] text-[var(--accent-fg)] shrink-0">
             <Key className="w-5 h-5" />
           </div>
           <div>
@@ -316,7 +316,7 @@ export const VaultView: React.FC = () => {
             ) : (
               <button
                 onClick={handleOpenNewModal}
-                className="btn-stealth-primary px-5 py-2.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B] flex items-center justify-center gap-2 mx-auto"
+                className="btn-stealth-primary px-5 py-2.5 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 flex items-center justify-center gap-2 mx-auto shadow-xs"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add your first credential</span>
@@ -416,7 +416,7 @@ export const VaultView: React.FC = () => {
                         onClick={() => handleToggleRevealPassword(item.id)}
                         className={`p-1.5 rounded-keepeit transition-colors ${
                           isRevealed
-                            ? 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)]'
+                            ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                             : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                         }`}
                         title={isRevealed ? 'Hide Password' : 'Reveal Password (15s auto-hide)'}
@@ -693,7 +693,7 @@ export const VaultView: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleOpenEditModal(itemDetail)}
-                  className="btn-stealth-primary px-4 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
+                  className="btn-stealth-primary px-4 py-1.5 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2"
                 >
                   EDIT
                 </button>
@@ -723,7 +723,7 @@ export const VaultView: React.FC = () => {
               <button
                 onClick={() => handleMoveFolder(undefined)}
                 className={`w-full text-left p-2 rounded-keepeit font-mono text-xs ${
-                  !itemToMove.folderId ? 'bg-[var(--accent-seal-soft)] font-semibold' : 'hover:bg-[var(--bg-surface)]'
+                  !itemToMove.folderId ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold' : 'hover:bg-[var(--bg-surface)] text-[var(--text-primary)]'
                 }`}
               >
                 (No Folder / Root)
@@ -734,8 +734,8 @@ export const VaultView: React.FC = () => {
                   onClick={() => handleMoveFolder(f.id)}
                   className={`w-full text-left p-2 rounded-keepeit font-mono text-xs flex items-center justify-between ${
                     itemToMove.folderId === f.id
-                      ? 'bg-[var(--accent-seal-soft)] font-semibold'
-                      : 'hover:bg-[var(--bg-surface)]'
+                      ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)] font-semibold'
+                      : 'hover:bg-[var(--bg-surface)] text-[var(--text-primary)]'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -1152,7 +1152,7 @@ const CredentialEditorModal: React.FC<CredentialEditorModalProps> = ({
             </button>
             <button
               type="submit"
-              className="btn-stealth-primary px-4 py-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
+              className="btn-stealth-primary px-4 py-1.5 active:scale-[0.98] font-mono-label text-xs font-semibold rounded-keepeit transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2"
             >
               SAVE CREDENTIAL
             </button>

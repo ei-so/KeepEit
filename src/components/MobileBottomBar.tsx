@@ -59,6 +59,8 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
 
   const isMoreActive = !mainTabs.some((t) => t.id === currentRoute);
 
+  const isInk = vaultData?.settings?.accent === 'ink';
+
   return (
     <>
       {/* Fixed Bottom Tab Bar (mobile only < 768px) */}
@@ -75,7 +77,9 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
               onClick={() => handleSelectRoute(tab.id)}
               className={`flex-1 py-1.5 px-1 flex flex-col items-center justify-center gap-0.5 rounded-keepeit transition-colors min-h-[44px] min-w-[44px] ${
                 isActive
-                  ? 'text-[var(--accent-seal)] font-semibold bg-[var(--accent-seal-soft)]'
+                  ? isInk
+                    ? 'text-white font-semibold bg-[var(--accent-seal-soft)]'
+                    : 'text-[var(--accent-seal)] font-semibold bg-[var(--accent-seal-soft)]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -92,7 +96,9 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           onClick={() => setIsMoreOpen((prev) => !prev)}
           className={`flex-1 py-1.5 px-1 flex flex-col items-center justify-center gap-0.5 rounded-keepeit transition-colors min-h-[44px] min-w-[44px] ${
             isMoreActive || isMoreOpen
-              ? 'text-[var(--accent-seal)] font-semibold bg-[var(--accent-seal-soft)]'
+              ? isInk
+                ? 'text-white font-semibold bg-[var(--accent-seal-soft)]'
+                : 'text-[var(--accent-seal)] font-semibold bg-[var(--accent-seal-soft)]'
               : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
           }`}
         >
@@ -138,11 +144,13 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
                     onClick={() => handleSelectRoute(item.id)}
                     className={`p-3 rounded-keepeit border text-left flex items-center gap-3 transition-colors min-h-[44px] ${
                       isActive
-                        ? 'bg-[var(--accent-seal-soft)] border-[var(--accent-seal)] text-[var(--accent-seal)] font-semibold'
+                        ? isInk
+                          ? 'bg-[var(--accent-seal-soft)] border-[var(--accent-seal)] text-white font-semibold'
+                          : 'bg-[var(--accent-seal-soft)] border-[var(--accent-seal)] text-[var(--accent-seal)] font-semibold'
                         : 'bg-[var(--bg-surface)] border-keepeit text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
                     }`}
                   >
-                    <Icon className="w-5 h-5 shrink-0 text-[var(--accent-seal)]" />
+                    <Icon className={`w-5 h-5 shrink-0 ${isActive && isInk ? 'text-white' : 'text-[var(--accent-seal)]'}`} />
                     <span className="text-xs font-mono-label truncate">{item.label}</span>
                   </button>
                 );

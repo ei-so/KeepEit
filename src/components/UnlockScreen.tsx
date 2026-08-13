@@ -475,7 +475,7 @@ export const UnlockScreen: React.FC = () => {
             {unlockMode === 'passkey' ? (
               <div className="space-y-4">
                 <div className="p-4 bg-[var(--bg-surface)] border-keepeit rounded-keepeit text-center space-y-2">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent-seal-soft)] text-[var(--accent-seal)]">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent-seal)] text-[var(--accent-fg)]">
                     <Fingerprint className="w-5 h-5" />
                   </div>
                   <h3 className="font-mono-label text-xs font-bold text-[var(--text-primary)]">

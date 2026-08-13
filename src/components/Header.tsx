@@ -41,8 +41,9 @@ export const Header: React.FC<HeaderProps> = ({
   isMobileSidebarOpen,
   onToggleMobileSidebar,
 }) => {
-  const { lockVault } = useVault();
+  const { lockVault, vaultData } = useVault();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const isInk = vaultData?.settings?.accent === 'ink';
 
   // Global '/' keyboard shortcut to focus search input
   useEffect(() => {
@@ -77,7 +78,9 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[var(--text-primary)]">
             KeepEit
           </span>
-          <span className="hidden sm:inline-block text-[10px] font-mono-label px-1.5 py-0.5 rounded-keepeit bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold">
+          <span className={`hidden sm:inline-block text-[10px] font-mono-label px-1.5 py-0.5 rounded-keepeit bg-[var(--accent-seal-soft)] font-semibold ${
+            isInk ? 'text-white' : 'text-[var(--accent-seal)]'
+          }`}>
             V1.0.0
           </span>
         </div>

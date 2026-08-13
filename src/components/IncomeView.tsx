@@ -390,7 +390,7 @@ export const IncomeView: React.FC = () => {
       {/* Add / Edit Income Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-md w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-keepeit pb-3">
               <h3 className="font-display font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-[var(--accent-seal)]" />
@@ -406,7 +406,7 @@ export const IncomeView: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
               {/* Source */}
-              <div className="space-y-1">
+              <div className="space-y-1 w-full min-w-0">
                 <label className="font-mono-label text-[var(--text-muted)] block">INCOME SOURCE *</label>
                 <input
                   type="text"
@@ -414,13 +414,13 @@ export const IncomeView: React.FC = () => {
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
                   placeholder="e.g. Monthly Salary, Acme Corp Freelance"
-                  className="w-full bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-seal)]"
+                  className="w-full min-w-0 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-seal)]"
                 />
               </div>
 
               {/* Amount & Currency */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2 space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-2 space-y-1 w-full min-w-0">
                   <label className="font-mono-label text-[var(--text-muted)] block">AMOUNT *</label>
                   <input
                     type="number"
@@ -430,16 +430,16 @@ export const IncomeView: React.FC = () => {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
                     placeholder="25000.00"
-                    className="w-full bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 font-mono text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-seal)]"
+                    className="w-full min-w-0 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 font-mono text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-seal)]"
                   />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 w-full min-w-0">
                   <label className="font-mono-label text-[var(--text-muted)] block">CURRENCY</label>
                   <select
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
-                    className="w-full bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-2 py-2 font-mono text-xs text-[var(--text-primary)] focus:outline-none"
+                    className="w-full min-w-0 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-2 py-2 font-mono text-xs text-[var(--text-primary)] focus:outline-none"
                   >
                     <option value="PHP">PHP (₱)</option>
                     <option value="USD">USD ($)</option>
@@ -450,24 +450,24 @@ export const IncomeView: React.FC = () => {
               </div>
 
               {/* Date & Category */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1 w-full min-w-0">
                   <label className="font-mono-label text-[var(--text-muted)] block">DATE *</label>
                   <input
                     type="date"
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 font-mono text-xs text-[var(--text-primary)] focus:outline-none"
+                    className="w-full min-w-0 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 font-mono text-xs text-[var(--text-primary)] focus:outline-none"
                   />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 w-full min-w-0">
                   <label className="font-mono-label text-[var(--text-muted)] block">CATEGORY</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 text-xs text-[var(--text-primary)] focus:outline-none"
+                    className="w-full min-w-0 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-3 py-2 text-xs text-[var(--text-primary)] focus:outline-none"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>

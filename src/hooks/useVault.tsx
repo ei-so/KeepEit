@@ -161,7 +161,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       } else if (accent === 'ink') {
         root.style.setProperty('--accent-seal', '#09090B');
         root.style.setProperty('--accent-seal-soft', '#27272A');
-        root.style.setProperty('--accent-fg', '#FAFAFA');
+        root.style.setProperty('--accent-fg', '#FFFFFF');
       } else {
         // seal (STEALTH SILVER) default
         root.style.setProperty('--accent-seal', '#E4E4E7');

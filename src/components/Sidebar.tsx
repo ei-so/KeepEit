@@ -78,6 +78,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (isMobileOpen) onCloseMobile();
   };
 
+  const isInk = vaultData?.settings?.accent === 'ink';
+
   const renderNavGroup = (items: typeof topItems) => (
     <div className="space-y-1">
       {items.map((item) => {
@@ -90,7 +92,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             title={item.label}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-keepeit transition-colors text-xs font-mono-label focus-visible:ring-2 ${
               isActive
-                ? 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold'
+                ? isInk
+                  ? 'bg-[var(--accent-seal-soft)] text-white font-semibold'
+                  : 'bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold'
                 : 'text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
             }`}
           >
