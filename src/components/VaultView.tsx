@@ -282,7 +282,7 @@ export const VaultView: React.FC = () => {
       </div>
 
       {/* Main Content Workspace */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-28 md:pb-16">
         {filteredCredentials.length === 0 ? (
           /* Real Empty State */
           <div className="max-w-md mx-auto my-12 text-center p-8 bg-[var(--bg-card)] border-keepeit rounded-keepeit space-y-4 shadow-sm">

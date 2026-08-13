@@ -89,7 +89,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
 
         {/* More Tab */}
         <button
-          onClick={() => setIsMoreOpen(true)}
+          onClick={() => setIsMoreOpen((prev) => !prev)}
           className={`flex-1 py-1.5 px-1 flex flex-col items-center justify-center gap-0.5 rounded-keepeit transition-colors min-h-[44px] min-w-[44px] ${
             isMoreActive || isMoreOpen
               ? 'text-[var(--accent-seal)] font-semibold bg-[var(--accent-seal-soft)]'
@@ -105,7 +105,10 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
 
       {/* "More" Navigation Bottom Sheet Modal */}
       {isMoreOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center p-0">
+        <div
+          onClick={() => setIsMoreOpen(false)}
+          className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center p-0"
+        >
           <div
             className="bg-[var(--bg-card)] border-t border-keepeit rounded-t-2xl w-full max-h-[85vh] overflow-y-auto p-5 shadow-2xl space-y-4 animate-in slide-in-from-bottom pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
             onClick={(e) => e.stopPropagation()}

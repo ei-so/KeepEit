@@ -1,18 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Hook to manage history entry for modals on mobile.
  * Pushes a history entry on open so Android hardware back button closes the modal.
  */
 export function useMobileModalHistory(isOpen: boolean, onClose: () => void) {
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (!isOpen) return;
 
     const stateKey = 'modal_' + Math.random().toString(36).substring(2, 7);
     window.history.pushState({ modalOpen: true, stateKey }, '');
 
-    const handlePopState = (e: PopStateEvent) => {
-      onClose();
+    const handlePopState = () => {
+      onCloseRef.current();
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -24,5 +29,5 @@ export function useMobileModalHistory(isOpen: boolean, onClose: () => void) {
         window.history.back();
       }
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 }

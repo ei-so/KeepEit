@@ -214,7 +214,7 @@ function VaultAppContent() {
         ) : currentRoute === 'favorites' ? (
           <FavoritesView />
         ) : (
-          <main className="flex-1 p-6 overflow-y-auto bg-[var(--bg-main)] flex flex-col items-center justify-center text-center">
+          <main className="flex-1 p-6 overflow-y-auto bg-[var(--bg-main)] flex flex-col items-center justify-center text-center pb-28 md:pb-16">
             <div className="max-w-md w-full bg-[var(--bg-card)] border-keepeit rounded-keepeit p-8 shadow-sm space-y-4">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-keepeit bg-[var(--accent-seal-soft)] text-[var(--accent-seal)]">
                 <RouteIcon className="w-7 h-7" />

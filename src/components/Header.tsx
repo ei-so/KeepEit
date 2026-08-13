@@ -146,22 +146,22 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <SlidersHorizontal className="w-4 h-4" />
           </button>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={onToggleTheme}
-            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Theme`}
-            className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
-          >
-            {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-          </button>
         </div>
 
-        {/* Lock Vault */}
+        {/* Theme Toggle (Visible on Mobile & Desktop) */}
+        <button
+          onClick={onToggleTheme}
+          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Theme`}
+          className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2 flex items-center justify-center min-h-[36px] min-w-[36px]"
+        >
+          {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+        </button>
+
+        {/* Lock Vault (Hidden on Mobile, Visible on Desktop) */}
         <button
           onClick={lockVault}
           title="Lock Vault Now"
-          className="p-1.5 rounded-keepeit text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 focus-visible:ring-2"
+          className="hidden md:flex items-center justify-center p-1.5 rounded-keepeit text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 focus-visible:ring-2"
         >
           <Lock className="w-4 h-4" />
         </button>

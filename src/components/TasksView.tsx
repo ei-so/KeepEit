@@ -434,7 +434,7 @@ export const TasksView: React.FC = () => {
       </div>
 
       {/* GROUPS SCROLLABLE CONTAINER */}
-      <div className="flex-1 overflow-y-auto p-4 max-w-5xl mx-auto w-full">
+      <div className="flex-1 overflow-y-auto p-4 max-w-5xl mx-auto w-full pb-28 md:pb-16">
         {filteredTasks.length === 0 && (
           <div className="p-8 text-center bg-[var(--bg-card)] border-keepeit rounded-keepeit my-6 space-y-3">
             <CheckSquare className="w-10 h-10 text-[var(--text-muted)] mx-auto" />

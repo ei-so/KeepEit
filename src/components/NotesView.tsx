@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 
 export const NotesView: React.FC = () => {
-  const { vaultData, addItem, updateItem, deleteItem, toggleFavorite, setAutosaveState, addTag } = useVault();
+  const { vaultData, addItem, updateItem, deleteItem, toggleFavorite, setAutosaveState, autosaveState, addTag } = useVault();
   const { showToast } = useToast();
 
   // Navigation Filter State (Pane 1)
@@ -69,6 +69,8 @@ export const NotesView: React.FC = () => {
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const isInitialLoadRef = useRef(true);
+
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   if (!vaultData) return null;
 
@@ -111,13 +113,6 @@ export const NotesView: React.FC = () => {
 
   // Active Selected Note Object
   const currentNote = allNotes.find((n) => n.id === selectedNoteId);
-
-  // Auto-select first note on mount if available and none selected
-  useEffect(() => {
-    if (!selectedNoteId && filteredNotes.length > 0) {
-      setSelectedNoteId(filteredNotes[0].id);
-    }
-  }, [filteredNotes, selectedNoteId]);
 
   // Sync editor state when selected note changes
   useEffect(() => {
@@ -273,6 +268,31 @@ export const NotesView: React.FC = () => {
     }
   };
 
+  // Quick Add Note Handler (Auto-save current note & create fresh note)
+  const handleQuickAddNote = async () => {
+    if (autosaveTimerRef.current) {
+      clearTimeout(autosaveTimerRef.current);
+    }
+    if (currentNote) {
+      try {
+        await updateItem({
+          ...currentNote,
+          title: editorTitle || 'Untitled Note',
+          content: editorContent,
+          folderId: editorFolderId,
+          tags: editorTags,
+          isFavorite: editorIsFavorite,
+        });
+      } catch (err) {
+        // Continue creating new note
+      }
+    }
+    await handleCreateNewNote();
+    setTimeout(() => {
+      titleInputRef.current?.focus();
+    }, 100);
+  };
+
   // Formatting Toolbar Helper for Textarea
   const insertFormatting = (prefix: string, suffix: string = '') => {
     const textarea = textareaRef.current;
@@ -281,7 +301,20 @@ export const NotesView: React.FC = () => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = editorContent.substring(start, end);
-    const replacement = `${prefix}${selectedText || 'text'}${suffix}`;
+
+    let replacement = '';
+    let cursorStart = start;
+    let cursorEnd = start;
+
+    if (selectedText.length > 0) {
+      replacement = `${prefix}${selectedText}${suffix}`;
+      cursorStart = start + prefix.length;
+      cursorEnd = start + prefix.length + selectedText.length;
+    } else {
+      replacement = `${prefix}${suffix}`;
+      cursorStart = start + prefix.length;
+      cursorEnd = start + prefix.length;
+    }
 
     const newContent =
       editorContent.substring(0, start) + replacement + editorContent.substring(end);
@@ -290,7 +323,7 @@ export const NotesView: React.FC = () => {
 
     setTimeout(() => {
       textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, start + prefix.length + (selectedText || 'text').length);
+      textarea.setSelectionRange(cursorStart, cursorEnd);
     }, 50);
   };
 
@@ -648,27 +681,53 @@ export const NotesView: React.FC = () => {
             <div className="flex-1 flex flex-col h-full overflow-hidden">
               {/* Note Header Toolbar */}
               <div className="p-3 border-b border-keepeit bg-[var(--bg-card)] space-y-3 shrink-0">
-                <div className="flex items-center justify-between gap-3">
-                  {/* Mobile Back Button */}
-                  <button
-                    onClick={() => setSelectedNoteId(null)}
-                    className="md:hidden flex items-center gap-1 text-xs font-mono-label text-[var(--accent-seal)] font-semibold px-2 py-1 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit shrink-0 min-h-[36px]"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Back</span>
-                  </button>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {/* Mobile Back Button - Always fully active */}
+                    <button
+                      onClick={() => setSelectedNoteId(null)}
+                      className="md:hidden flex items-center gap-1 text-xs font-mono-label text-[var(--accent-seal)] font-semibold px-2.5 py-1.5 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit shrink-0 min-h-[36px] opacity-100 hover:bg-[var(--bg-surface-hover)] active:scale-95 cursor-pointer"
+                      title="Return to Notes List"
+                    >
+                      <ArrowLeft className="w-4 h-4 text-[var(--accent-seal)]" />
+                      <span>← BACK</span>
+                    </button>
 
-                  {/* Title Field */}
-                  <input
-                    type="text"
-                    value={editorTitle}
-                    onChange={handleTitleChange}
-                    placeholder="Note Title..."
-                    className="flex-1 bg-transparent font-display font-bold text-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-seal)] rounded-keepeit px-2 py-1"
-                  />
+                    {/* Title Field */}
+                    <input
+                      ref={titleInputRef}
+                      type="text"
+                      value={editorTitle}
+                      onChange={handleTitleChange}
+                      placeholder="Note Title..."
+                      className="flex-1 bg-transparent font-display font-bold text-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-seal)] rounded-keepeit px-2 py-1 min-w-0"
+                    />
+                  </div>
 
-                  {/* Actions & View Toggle */}
+                  {/* Actions, Status & View Toggle */}
                   <div className="flex items-center gap-2 shrink-0">
+                    {/* Status Indicator */}
+                    <div className="flex items-center gap-1 text-[10px] font-mono px-2 py-1 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit shrink-0">
+                      {autosaveState === 'saving' ? (
+                        <span className="text-[var(--text-muted)] animate-pulse">Saving...</span>
+                      ) : autosaveState === 'saved' ? (
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
+                          <Check className="w-3.5 h-3.5" /> Saved ✓
+                        </span>
+                      ) : (
+                        <span className="text-emerald-600 dark:text-emerald-400 font-medium">Autosaved</span>
+                      )}
+                    </div>
+
+                    {/* Quick Add Fresh Note Button */}
+                    <button
+                      onClick={handleQuickAddNote}
+                      className="p-1.5 rounded-keepeit bg-[var(--accent-seal)] text-[var(--accent-fg)] hover:opacity-90 font-bold flex items-center justify-center min-h-[34px] min-w-[34px] shadow-xs active:scale-95 transition-all cursor-pointer"
+                      title="Auto-save & Create Fresh Note (+)"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+
                     {/* Mode Toggle */}
                     <div className="flex items-center bg-[var(--bg-surface)] border-keepeit rounded-keepeit p-0.5 text-xs font-mono">
                       <button
@@ -680,7 +739,7 @@ export const NotesView: React.FC = () => {
                         }`}
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        <span>Write</span>
+                        <span className="hidden sm:inline">Write</span>
                       </button>
                       <button
                         onClick={() => setViewMode('preview')}
@@ -691,7 +750,7 @@ export const NotesView: React.FC = () => {
                         }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        <span>Preview</span>
+                        <span className="hidden sm:inline">Preview</span>
                       </button>
                     </div>
 

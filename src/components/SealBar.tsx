@@ -62,7 +62,7 @@ export const SealBar: React.FC = () => {
   return (
     <footer
       aria-label="Vault Seal Status Bar"
-      className="fixed bottom-[calc(54px+env(safe-area-inset-bottom,0px))] md:bottom-0 left-0 right-0 z-30 bg-[var(--bg-surface)] border-t border-keepeit px-4 py-1.5 md:pb-[calc(0.375rem+env(safe-area-inset-bottom,0px))] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono-label select-none shadow-lg transition-all"
+      className="hidden md:flex fixed bottom-0 left-0 right-0 z-30 bg-[var(--bg-surface)] border-t border-keepeit px-4 py-1.5 md:pb-[calc(0.375rem+env(safe-area-inset-bottom,0px))] items-center justify-between gap-2 text-[11px] font-mono-label select-none shadow-lg transition-all"
     >
       {/* Left: Security Status & Item Breakdown */}
       <div className="flex items-center gap-3 flex-wrap">
