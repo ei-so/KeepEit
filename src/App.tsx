@@ -168,7 +168,7 @@ function VaultAppContent() {
   const RouteIcon = activeRouteInfo.icon;
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-primary)] flex flex-col font-sans antialiased select-none">
+    <div className="min-h-[100dvh] w-full max-w-full overflow-x-hidden bg-[var(--bg-main)] text-[var(--text-primary)] flex flex-col font-sans antialiased select-none">
       {/* Top Header Bar */}
       <Header
         searchQuery={searchQuery}
@@ -187,7 +187,7 @@ function VaultAppContent() {
       />
 
       {/* Main Workspace Area */}
-      <div className="flex-1 flex overflow-hidden h-[calc(100vh-57px-37px)]">
+      <div className="flex-1 flex overflow-hidden min-h-0 md:h-[calc(100dvh-57px-37px)]">
         {/* Left Collapsible Sidebar */}
         <Sidebar
           currentRoute={currentRoute}

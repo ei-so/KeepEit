@@ -243,7 +243,7 @@ export const UnlockScreen: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--bg-main)] flex flex-col items-center justify-center p-4 select-none relative">
+    <main className="min-h-[100dvh] w-full max-w-full overflow-x-hidden bg-[var(--bg-main)] flex flex-col items-center justify-center p-4 select-none relative pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
       <div
         className={`max-w-md w-full bg-[var(--bg-card)] border-keepeit rounded-keepeit p-6 sm:p-8 shadow-xl relative z-10 ${
           isShaking ? 'animate-shake' : ''
@@ -632,16 +632,14 @@ export const UnlockScreen: React.FC = () => {
             )}
 
             {/* Reset Vault trigger */}
-            <div className="mt-5 pt-3 border-t border-keepeit flex justify-end">
-              <button
-                type="button"
-                onClick={() => setShowWipeConfirm(true)}
-                className="text-[10px] font-mono-label text-[var(--accent-rust)] hover:underline flex items-center gap-1"
-              >
-                <Trash2 className="w-3 h-3" />
-                <span>WIPE VAULT & START OVER</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowWipeConfirm(true)}
+              className="flex items-center justify-center gap-1.5 w-full text-center mt-4 text-red-500/80 hover:text-red-600 font-mono text-[11px] uppercase tracking-wider hover:underline transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>WIPE VAULT & START OVER</span>
+            </button>
           </div>
         )}
         

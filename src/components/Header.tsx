@@ -61,9 +61,9 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 bg-[var(--bg-surface)] border-b border-keepeit px-4 py-3 flex items-center justify-between gap-3 shadow-xs">
+    <header className="sticky top-0 z-30 bg-[var(--bg-surface)] border-b border-keepeit px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3 shadow-xs pt-[env(safe-area-inset-top,0px)] max-w-full overflow-hidden">
       {/* Left: Mobile Toggle & App Title */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <button
           onClick={onToggleMobileSidebar}
           aria-label="Toggle Navigation Drawer"
@@ -74,31 +74,31 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="flex items-center gap-2">
           <Logo size="sm" />
-          <span className="font-display text-xl font-bold tracking-tight text-[var(--text-primary)]">
+          <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[var(--text-primary)]">
             KeepEit
           </span>
-          <span className="text-[10px] font-mono-label px-1.5 py-0.5 rounded-keepeit bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold">
+          <span className="hidden sm:inline-block text-[10px] font-mono-label px-1.5 py-0.5 rounded-keepeit bg-[var(--accent-seal-soft)] text-[var(--accent-seal)] font-semibold">
             V1.0.0
           </span>
         </div>
       </div>
 
       {/* Middle: Global Search Input */}
-      <div className="flex-1 max-w-md mx-2 relative">
+      <div className="flex-1 min-w-0 max-w-md mx-1 sm:mx-2 relative">
         <div className="relative flex items-center">
-          <Search className="w-4 h-4 absolute left-3 text-[var(--text-muted)]" />
+          <Search className="w-4 h-4 absolute left-3 text-[var(--text-muted)] pointer-events-none" />
           <input
             ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search items, notes, credentials... (Press '/' to focus)"
-            className="w-full bg-[var(--bg-card)] border-keepeit rounded-keepeit pl-9 pr-16 py-1.5 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)]"
+            placeholder="Search items..."
+            className="w-full bg-[var(--bg-card)] border-keepeit rounded-keepeit pl-9 pr-3 sm:pr-16 py-1.5 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus-visible:ring-2 focus-visible:ring-[var(--accent-seal)]"
           />
           {onOpenCommandPalette && (
             <button
               onClick={onOpenCommandPalette}
-              className="absolute right-2.5 font-mono text-[10px] bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-1.5 py-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              className="absolute right-2 font-mono text-[10px] bg-[var(--bg-surface)] border border-keepeit rounded-keepeit px-1.5 py-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hidden sm:block"
               title="Open Command Palette (⌘K / Ctrl+K)"
             >
               ⌘K
@@ -108,51 +108,54 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Primary Action: New Item */}
-        <button
-          onClick={onOpenNewItemModal}
-          className="btn-stealth-primary flex items-center gap-1.5 bg-zinc-900 text-zinc-100 border border-zinc-700/60 hover:bg-zinc-800 hover:border-zinc-500 active:scale-[0.98] px-3 py-1.5 rounded-keepeit font-mono-label text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-[#09090B]"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">NEW ITEM</span>
-        </button>
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* Extra Desktop Action Icons */}
+        <div className="hidden md:flex items-center gap-1.5 sm:gap-2">
+          {/* Primary Action: New Item */}
+          <button
+            onClick={onOpenNewItemModal}
+            className="btn-stealth-primary flex items-center gap-1.5 px-3 py-1.5 rounded-keepeit font-mono-label text-xs font-semibold transition-all focus:outline-none"
+          >
+            <Plus className="w-4 h-4" />
+            <span>NEW ITEM</span>
+          </button>
 
-        {/* Password Generator */}
-        <button
-          onClick={onOpenPasswordGenModal}
-          title="Password Generator Tool"
-          className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
-        >
-          <KeyRound className="w-4 h-4" />
-        </button>
+          {/* Password Generator */}
+          <button
+            onClick={onOpenPasswordGenModal}
+            title="Password Generator Tool"
+            className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
+          >
+            <KeyRound className="w-4 h-4" />
+          </button>
 
-        {/* Encrypted Backup */}
-        <button
-          onClick={onOpenBackupModal}
-          title="Export / Import Backup"
-          className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
-        >
-          <HardDrive className="w-4 h-4" />
-        </button>
+          {/* Encrypted Backup */}
+          <button
+            onClick={onOpenBackupModal}
+            title="Export / Import Backup"
+            className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
+          >
+            <HardDrive className="w-4 h-4" />
+          </button>
 
-        {/* Settings */}
-        <button
-          onClick={onOpenSettingsModal}
-          title="Vault Settings"
-          className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
-        >
-          <SlidersHorizontal className="w-4 h-4" />
-        </button>
+          {/* Settings */}
+          <button
+            onClick={onOpenSettingsModal}
+            title="Vault Settings"
+            className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+          </button>
 
-        {/* Theme Toggle */}
-        <button
-          onClick={onToggleTheme}
-          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Theme`}
-          className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
-        >
-          {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-        </button>
+          {/* Theme Toggle */}
+          <button
+            onClick={onToggleTheme}
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Theme`}
+            className="p-1.5 rounded-keepeit text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2"
+          >
+            {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          </button>
+        </div>
 
         {/* Lock Vault */}
         <button

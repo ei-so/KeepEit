@@ -64,7 +64,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
       {/* Fixed Bottom Tab Bar (mobile only < 768px) */}
       <nav
         aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-card)] border-t border-keepeit px-2 py-1 flex items-center justify-around shadow-2xl select-none pb-[calc(0.25rem+env(safe-area-inset-bottom))]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-card)] border-t border-keepeit px-2 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom,0px))] flex items-center justify-around shadow-2xl select-none"
       >
         {mainTabs.map((tab) => {
           const Icon = tab.icon;
