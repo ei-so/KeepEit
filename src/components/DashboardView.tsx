@@ -96,7 +96,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[var(--bg-main)] overflow-y-auto pb-28 md:pb-16">
+    <div className="flex-1 flex flex-col h-full bg-[var(--bg-main)] overflow-y-auto pb-28 sm:pb-12 md:pb-16">
       {/* Top Banner & Greeting */}
       <div className="p-6 border-b border-keepeit bg-[var(--bg-card)] space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

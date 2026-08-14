@@ -382,7 +382,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-2xl w-full p-6 shadow-2xl space-y-6 max-h-[90vh] flex flex-col">
+      <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-2xl w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-6 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-keepeit pb-3 shrink-0">
           <h3 className="font-display font-bold text-base text-[var(--text-primary)] flex items-center gap-2">

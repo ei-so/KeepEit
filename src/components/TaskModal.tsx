@@ -122,7 +122,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-md w-full p-6 shadow-2xl space-y-4 font-mono text-xs">
+      <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-md w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-4 font-mono text-xs max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-keepeit pb-3">
           <div className="flex items-center gap-2">

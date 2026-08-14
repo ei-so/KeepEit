@@ -390,7 +390,7 @@ export const NotesView: React.FC = () => {
           </div>
 
           {/* Navigation Filter Links */}
-          <div className="p-3 flex-1 overflow-y-auto space-y-4 font-mono text-xs">
+          <div className="p-3 flex-1 overflow-y-auto space-y-4 font-mono text-xs pb-28 md:pb-6">
             {/* Quick Views */}
             <div className="space-y-1">
               <span className="text-[10px] font-mono-label text-[var(--text-muted)] block px-2 mb-1">
@@ -545,7 +545,7 @@ export const NotesView: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-keepeit">
+          <div className="flex-1 overflow-y-auto divide-y divide-keepeit pb-28 md:pb-6">
             {filteredNotes.length === 0 ? (
               <div className="p-6 text-center space-y-3">
                 <FileText className="w-8 h-8 text-[var(--text-muted)] mx-auto" />
@@ -943,7 +943,7 @@ export const NotesView: React.FC = () => {
               </div>
 
               {/* Note Content Viewport */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[var(--bg-card)]">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[var(--bg-card)] pb-28 sm:pb-12 md:pb-8">
                 <div className="relative w-full h-full min-h-[350px]">
                   {(!editorContent ||
                     editorContent === '<br>' ||
@@ -958,7 +958,7 @@ export const NotesView: React.FC = () => {
                     contentEditable
                     suppressContentEditableWarning
                     onInput={handleEditorInput}
-                    className="rich-editor-content min-h-[300px] w-full outline-none leading-relaxed text-neutral-800 dark:text-neutral-100 bg-transparent focus:outline-none"
+                    className="rich-editor-content min-h-[300px] w-full outline-none leading-relaxed text-neutral-900 dark:text-neutral-100 bg-transparent focus:outline-none"
                   />
                 </div>
               </div>
@@ -976,7 +976,7 @@ export const NotesView: React.FC = () => {
       {/* MOVE TO FOLDER MODAL */}
       {noteToMove && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-sm w-full p-5 shadow-2xl space-y-4 font-mono text-xs">
+          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-sm w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-4 font-mono text-xs max-h-[90vh] overflow-y-auto">
             <h3 className="font-display font-bold text-sm text-[var(--text-primary)]">
               Move '{noteToMove.title}' to Folder
             </h3>
@@ -1030,7 +1030,7 @@ export const NotesView: React.FC = () => {
       {/* DELETE CONFIRMATION DIALOG */}
       {noteToDelete && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit p-6 max-w-sm w-full shadow-2xl space-y-3 font-mono text-xs">
+          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit p-4 sm:p-6 pb-8 max-w-sm w-full shadow-2xl space-y-3 font-mono text-xs max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-bold text-[var(--accent-rust)] flex items-center gap-2">
               Delete Note?
             </h3>

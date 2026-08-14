@@ -282,7 +282,7 @@ export const VaultView: React.FC = () => {
       </div>
 
       {/* Main Content Workspace */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-28 md:pb-16">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-28 sm:pb-12 md:pb-16">
         {filteredCredentials.length === 0 ? (
           /* Real Empty State */
           <div className="max-w-md mx-auto my-12 text-center p-8 bg-[var(--bg-card)] border-keepeit rounded-keepeit space-y-4 shadow-sm">
@@ -589,7 +589,7 @@ export const VaultView: React.FC = () => {
       {/* DETAIL MODAL */}
       {itemDetail && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-md w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-md w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-keepeit pb-3">
               <div className="flex items-center gap-3">
                 <div
@@ -715,7 +715,7 @@ export const VaultView: React.FC = () => {
       {/* MOVE TO FOLDER MODAL */}
       {itemToMove && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-sm w-full p-5 shadow-2xl space-y-4">
+          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit max-w-sm w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="font-display font-bold text-sm text-[var(--text-primary)]">
               Move '{itemToMove.title}' to Folder
             </h3>
@@ -763,7 +763,7 @@ export const VaultView: React.FC = () => {
       {/* DELETE CONFIRMATION DIALOG */}
       {itemToDelete && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit p-6 max-w-sm w-full shadow-2xl space-y-3">
+          <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit p-4 sm:p-6 pb-8 max-w-sm w-full shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-bold text-[var(--accent-rust)] flex items-center gap-2">
               <ShieldAlert className="w-5 h-5" />
               Delete Credential?

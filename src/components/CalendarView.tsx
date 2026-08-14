@@ -237,7 +237,7 @@ export const CalendarView: React.FC = () => {
       </div>
 
       {/* Main Grid Section */}
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 pb-28 sm:pb-12 md:pb-16 space-y-6">
         {/* MONTH VIEW */}
         {viewMode === 'month' && (
           <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit overflow-hidden shadow-sm">
@@ -559,7 +559,7 @@ export const CalendarView: React.FC = () => {
       {/* Add Task Quick Modal */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-sm w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-sm w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-keepeit pb-3">
               <h3 className="font-display font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
                 <CheckSquare className="w-5 h-5 text-[var(--accent-seal)]" />

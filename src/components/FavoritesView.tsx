@@ -127,7 +127,7 @@ export const FavoritesView: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 pb-28 sm:pb-12 md:pb-16 space-y-6">
         {/* Folders Section */}
         {(activeTab === 'all' || activeTab === 'folders') && favoriteFolders.length > 0 && (
           <div className="space-y-3">

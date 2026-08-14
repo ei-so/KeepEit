@@ -65,24 +65,43 @@ export const IncomeView: React.FC = () => {
       return matchesSearch && matchesCat;
     })
     .sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+      const dateA = new Date(a.date).getTime() || 0;
+      const dateB = new Date(b.date).getTime() || 0;
+
+      // Primary sort: by date
+      if (dateA !== dateB) {
+        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+      }
+
+      // Secondary tie-breaker: by createdAt timestamp
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+
+      if (timeA !== timeB) {
+        return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
+      }
+
+      // Tertiary fallback: by id comparison
+      if (a.id && b.id && a.id !== b.id) {
+        return sortOrder === 'desc' ? b.id.localeCompare(a.id) : a.id.localeCompare(b.id);
+      }
+
+      return 0;
     });
 
-  // Calculate Summary Cards metrics
+  // Calculate Summary Cards metrics dynamically based on filteredIncome
   const now = new Date();
   const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-  const thisMonthTotal = incomeList
+  const thisMonthTotal = filteredIncome
     .filter((i) => i.date.startsWith(currentMonthStr))
     .reduce((sum, i) => sum + Number(i.amount || 0), 0);
 
-  const allTimeTotal = incomeList.reduce((sum, i) => sum + Number(i.amount || 0), 0);
+  const displayedTotal = filteredIncome.reduce((sum, i) => sum + Number(i.amount || 0), 0);
 
-  // Top Category
+  // Top Category from filtered results
   const catTotals: Record<string, number> = {};
-  incomeList.forEach((i) => {
+  filteredIncome.forEach((i) => {
     catTotals[i.category] = (catTotals[i.category] || 0) + Number(i.amount || 0);
   });
   let topCat = 'N/A';
@@ -94,7 +113,8 @@ export const IncomeView: React.FC = () => {
     }
   });
 
-  const entryCount = incomeList.length;
+  const entryCount = filteredIncome.length;
+  const isFiltered = searchQuery.trim() !== '' || selectedCategory !== 'all';
 
   const formatCurrency = (val: number, curr = 'PHP') => {
     const symbol = curr === 'PHP' ? '₱' : curr === 'USD' ? '$' : `${curr} `;
@@ -192,14 +212,14 @@ export const IncomeView: React.FC = () => {
             </p>
           </div>
 
-          {/* Card 2: All-Time */}
+          {/* Card 2: Total */}
           <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1">
             <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase flex items-center gap-1">
               <TrendingUp className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
-              ALL-TIME TOTAL
+              {isFiltered ? 'FILTERED TOTAL' : 'ALL-TIME TOTAL'}
             </span>
             <p className="font-mono text-base font-bold text-[var(--text-primary)] truncate">
-              {formatCurrency(allTimeTotal)}
+              {formatCurrency(displayedTotal)}
             </p>
           </div>
 
@@ -223,7 +243,7 @@ export const IncomeView: React.FC = () => {
           <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1">
             <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase flex items-center gap-1">
               <FileSpreadsheet className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
-              TOTAL ENTRIES
+              {isFiltered ? 'MATCHING ENTRIES' : 'TOTAL ENTRIES'}
             </span>
             <p className="font-mono text-base font-bold text-[var(--text-primary)]">
               {entryCount} <span className="text-xs font-normal text-[var(--text-muted)]">records</span>
@@ -264,8 +284,8 @@ export const IncomeView: React.FC = () => {
             {/* Sort Toggle */}
             <button
               onClick={() => setSortOrder((o) => (o === 'desc' ? 'asc' : 'desc'))}
-              className="px-3 py-2 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] flex items-center gap-1 shrink-0"
-              title="Sort by date"
+              className="px-3 py-2 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] flex items-center gap-1 shrink-0 cursor-pointer"
+              title="Toggle chronological sort order"
             >
               <ArrowUpDown className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
               <span>{sortOrder === 'desc' ? 'NEWEST FIRST' : 'OLDEST FIRST'}</span>
@@ -275,7 +295,7 @@ export const IncomeView: React.FC = () => {
       </div>
 
       {/* Main Income Ledger Table */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6 pb-28 sm:pb-12 md:pb-16">
         {filteredIncome.length === 0 ? (
           <div className="p-12 text-center bg-[var(--bg-card)] border border-keepeit rounded-keepeit space-y-3 max-w-md mx-auto">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-surface)] text-[var(--text-muted)]">
@@ -390,7 +410,7 @@ export const IncomeView: React.FC = () => {
       {/* Add / Edit Income Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-md w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-card)] border border-keepeit rounded-keepeit max-w-md w-full p-4 sm:p-6 pb-8 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-keepeit pb-3">
               <h3 className="font-display font-bold text-base text-[var(--text-primary)] flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-[var(--accent-seal)]" />
