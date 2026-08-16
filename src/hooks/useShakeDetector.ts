@@ -10,8 +10,8 @@ interface ShakeDetectorOptions {
 export function useShakeDetector({
   onShake,
   enabled,
-  threshold = 24,
-  cooldownMs = 2000,
+  threshold = 15,
+  cooldownMs = 1500,
 }: ShakeDetectorOptions) {
   const onShakeRef = useRef(onShake);
   const enabledRef = useRef(enabled);
