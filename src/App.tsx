@@ -23,6 +23,7 @@ import { FolderManagerModal } from './components/FolderManagerModal';
 import { TagManagerModal } from './components/TagManagerModal';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { usePWAInstall, IosInstallSheetModal, IosDataLossBanner } from './components/InstallPrompt';
+import { PrivacyShield } from './components/PrivacyShield';
 
 import {
   LayoutDashboard,
@@ -51,6 +52,34 @@ function VaultAppContent() {
     },
     enabled: Boolean(vaultData?.settings?.panicShakeEnabled) && isUnlocked,
   });
+
+  // App Switcher Privacy Screen Shield on backgrounding/blur
+  const [isBackgrounded, setIsBackgrounded] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleHide = () => setIsBackgrounded(true);
+    const handleShow = () => setIsBackgrounded(false);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        handleHide();
+      } else {
+        handleShow();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('blur', handleHide);
+    window.addEventListener('focus', handleShow);
+    window.addEventListener('pagehide', handleHide);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('blur', handleHide);
+      window.removeEventListener('focus', handleShow);
+      window.removeEventListener('pagehide', handleHide);
+    };
+  }, []);
 
   // Route & Navigation State - default to Dashboard Screen
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('dashboard');
@@ -318,6 +347,9 @@ function VaultAppContent() {
         onClose={() => setIsCommandPaletteOpen(false)}
         onNavigate={(route) => setCurrentRoute(route)}
       />
+
+      {/* App Switcher Privacy Screen Shield */}
+      <PrivacyShield isVisible={isBackgrounded && isUnlocked} />
     </div>
   );
 }
