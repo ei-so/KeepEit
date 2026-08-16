@@ -109,6 +109,61 @@
     outline: 2px solid var(--accent-seal);
     outline-offset: 2px;
   }
+
+  /* Tactile Press & Hover Micro-Interactions */
+  .tactile-btn {
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tactile-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
+  .tactile-card {
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tactile-card:hover {
+      transform: translateY(-2px);
+    }
+  }
+  .tactile-card:active {
+    transform: scale(0.98);
+    opacity: 0.92;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.25s ease-out forwards;
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-checkmark-pop {
+  animation: checkmarkPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 @keyframes shake {

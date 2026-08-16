@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useVault } from '../hooks/useVault';
 import { IncomeItem } from '../types/vault';
+import { AnimatedCounter } from './AnimatedCounter';
 import {
   Wallet,
   Plus,
@@ -202,29 +203,29 @@ export const IncomeView: React.FC = () => {
         {/* 4 Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
           {/* Card 1: This Month */}
-          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1">
+          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-150">
             <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase flex items-center gap-1">
               <CalendarIcon className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
               THIS MONTH
             </span>
             <p className="font-mono text-base font-bold text-[var(--accent-seal)] truncate">
-              {formatCurrency(thisMonthTotal)}
+              <AnimatedCounter value={thisMonthTotal} formatFn={(v) => formatCurrency(v)} />
             </p>
           </div>
 
           {/* Card 2: Total */}
-          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1">
+          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-150">
             <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase flex items-center gap-1">
               <TrendingUp className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
               {isFiltered ? 'FILTERED TOTAL' : 'ALL-TIME TOTAL'}
             </span>
             <p className="font-mono text-base font-bold text-[var(--text-primary)] truncate">
-              {formatCurrency(displayedTotal)}
+              <AnimatedCounter value={displayedTotal} formatFn={(v) => formatCurrency(v)} />
             </p>
           </div>
 
           {/* Card 3: Top Category */}
-          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1">
+          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-150">
             <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase flex items-center gap-1">
               <TagIcon className="w-3.5 h-3.5 text-amber-500" />
               TOP CATEGORY
@@ -233,20 +234,21 @@ export const IncomeView: React.FC = () => {
               {topCat}{' '}
               {topCatMax > 0 && (
                 <span className="font-mono text-[10px] text-[var(--text-muted)]">
-                  ({formatCurrency(topCatMax)})
+                  (<AnimatedCounter value={topCatMax} formatFn={(v) => formatCurrency(v)} />)
                 </span>
               )}
             </p>
           </div>
 
           {/* Card 4: Entry Count */}
-          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1">
+          <div className="p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-150">
             <span className="text-[10px] font-mono-label text-[var(--text-muted)] uppercase flex items-center gap-1">
               <FileSpreadsheet className="w-3.5 h-3.5 text-[var(--accent-seal)]" />
               {isFiltered ? 'MATCHING ENTRIES' : 'TOTAL ENTRIES'}
             </span>
             <p className="font-mono text-base font-bold text-[var(--text-primary)]">
-              {entryCount} <span className="text-xs font-normal text-[var(--text-muted)]">records</span>
+              <AnimatedCounter value={entryCount} formatFn={(v) => Math.round(v).toString()} />{' '}
+              <span className="text-xs font-normal text-[var(--text-muted)]">records</span>
             </p>
           </div>
         </div>
@@ -331,10 +333,11 @@ export const IncomeView: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-keepeit font-sans text-[var(--text-primary)]">
-                  {filteredIncome.map((item) => (
+                  {filteredIncome.map((item, index) => (
                     <tr
                       key={item.id}
-                      className="hover:bg-[var(--bg-surface-hover)] transition-colors group"
+                      style={{ animationDelay: `${index * 30}ms` }}
+                      className="hover:bg-[var(--bg-surface-hover)] transition-all duration-150 group animate-[fadeInUp_0.25s_ease-out_forwards]"
                     >
                       {/* Date */}
                       <td className="py-3.5 px-4 font-mono text-xs whitespace-nowrap text-[var(--text-muted)]">
@@ -373,7 +376,7 @@ export const IncomeView: React.FC = () => {
                         <div className="flex items-center justify-center gap-1">
                           <button
                             onClick={() => toggleIncomeFavorite(item.id)}
-                            className="p-1 text-[var(--text-muted)] hover:text-amber-500"
+                            className="p-1 text-[var(--text-muted)] hover:text-amber-500 rounded-keepeit transition-all duration-150 active:scale-90"
                             title={item.isFavorite ? 'Unstar Entry' : 'Star Entry'}
                           >
                             <Star
@@ -384,14 +387,14 @@ export const IncomeView: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleOpenEditModal(item)}
-                            className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                            className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-keepeit transition-all duration-150 active:scale-90"
                             title="Edit Entry"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => deleteIncome(item.id)}
-                            className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-rust)]"
+                            className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-rust)] rounded-keepeit transition-all duration-150 active:scale-90"
                             title="Delete Entry"
                           >
                             <Trash2 className="w-4 h-4" />

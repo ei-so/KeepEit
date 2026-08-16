@@ -46,6 +46,10 @@ export const VaultView: React.FC = () => {
   // Active Overflow Menu
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
+  // Copy feedback state for checkmark pop (1.2s reset)
+  const [copiedItemId, setCopiedItemId] = useState<string | null>(null);
+  const copyFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Modals state
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<CredentialItem | null>(null);
@@ -57,6 +61,7 @@ export const VaultView: React.FC = () => {
   useEffect(() => {
     return () => {
       Object.values(revealTimersRef.current).forEach((timer) => clearTimeout(timer as ReturnType<typeof setTimeout>));
+      if (copyFeedbackTimerRef.current) clearTimeout(copyFeedbackTimerRef.current);
     };
   }, []);
 
@@ -132,10 +137,18 @@ export const VaultView: React.FC = () => {
     });
   };
 
-  // Copy Password Handler with 30s Clipboard Auto-Clear
-  const handleCopyPassword = (password: string) => {
+  // Copy Password Handler with 30s Clipboard Auto-Clear and 1.2s checkmark pop
+  const handleCopyPassword = (password: string, itemId?: string) => {
     if (!password) return;
     navigator.clipboard.writeText(password);
+
+    if (itemId) {
+      if (copyFeedbackTimerRef.current) clearTimeout(copyFeedbackTimerRef.current);
+      setCopiedItemId(itemId);
+      copyFeedbackTimerRef.current = setTimeout(() => {
+        setCopiedItemId(null);
+      }, 1200);
+    }
 
     // Schedule clipboard clear after 30 seconds
     setTimeout(async () => {
@@ -326,17 +339,19 @@ export const VaultView: React.FC = () => {
         ) : viewMode === 'grid' ? (
           /* GRID VIEW */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredCredentials.map((item) => {
+            {filteredCredentials.map((item, index) => {
               const isRevealed = !!revealedPasswordIds[item.id];
               const folder = vaultData.folders.find((f) => f.id === item.folderId);
               const avatarBg = getHashColor(item.title);
               const letter = item.title ? item.title.charAt(0).toUpperCase() : '?';
+              const isCopied = copiedItemId === item.id;
 
               return (
                 <div
                   key={item.id}
                   onClick={() => setItemDetail(item)}
-                  className="bg-[var(--bg-card)] border-keepeit rounded-keepeit p-4 flex flex-col justify-between transition-all hover:border-[var(--accent-seal)] hover:shadow-sm group cursor-pointer relative"
+                  style={{ animationDelay: `${index * 35}ms` }}
+                  className="bg-[var(--bg-card)] border-keepeit rounded-keepeit p-4 flex flex-col justify-between transition-all duration-150 active:scale-[0.98] active:opacity-90 hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--accent-seal)] group cursor-pointer relative animate-[fadeInUp_0.25s_ease-out_forwards]"
                 >
                   {/* Card Header */}
                   <div>
@@ -365,7 +380,7 @@ export const VaultView: React.FC = () => {
                           e.stopPropagation();
                           toggleFavorite(item.id);
                         }}
-                        className={`p-1 rounded-keepeit transition-colors ${
+                        className={`p-1 rounded-keepeit transition-all duration-150 active:scale-90 ${
                           item.isFavorite
                             ? 'text-amber-500'
                             : 'text-[var(--text-muted)] opacity-0 group-hover:opacity-100 hover:text-[var(--text-primary)]'
@@ -414,7 +429,7 @@ export const VaultView: React.FC = () => {
                       {/* Reveal Password (15s auto-hide) */}
                       <button
                         onClick={() => handleToggleRevealPassword(item.id)}
-                        className={`p-1.5 rounded-keepeit transition-colors ${
+                        className={`p-1.5 rounded-keepeit transition-all duration-150 active:scale-95 ${
                           isRevealed
                             ? 'bg-[var(--accent-seal)] text-[var(--accent-fg)]'
                             : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
@@ -426,18 +441,26 @@ export const VaultView: React.FC = () => {
 
                       {/* Copy Password (30s auto-clear) */}
                       <button
-                        onClick={() => handleCopyPassword(item.password)}
-                        className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit transition-colors"
+                        onClick={() => handleCopyPassword(item.password, item.id)}
+                        className={`p-1.5 rounded-keepeit transition-all duration-150 ${
+                          isCopied
+                            ? 'scale-110 text-emerald-500 bg-emerald-500/10'
+                            : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] active:scale-95'
+                        }`}
                         title="Copy Password (auto-clears in 30s)"
                       >
-                        <Copy className="w-3.5 h-3.5" />
+                        {isCopied ? (
+                          <Check className="w-3.5 h-3.5 animate-checkmark-pop text-emerald-500" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
                       </button>
 
                       {/* Overflow Menu */}
                       <div className="relative">
                         <button
                           onClick={() => setActiveMenuId(activeMenuId === item.id ? null : item.id)}
-                          className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
+                          className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit transition-all active:scale-95"
                           title="More actions"
                         >
                           <MoreVertical className="w-3.5 h-3.5" />
@@ -447,7 +470,7 @@ export const VaultView: React.FC = () => {
                           <div className="absolute right-0 bottom-8 z-30 w-40 bg-[var(--bg-card)] border-keepeit rounded-keepeit shadow-xl py-1 text-xs font-mono">
                             <button
                               onClick={() => handleOpenEditModal(item)}
-                              className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--text-primary)]"
+                              className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--text-primary)] transition-colors"
                             >
                               <Edit className="w-3.5 h-3.5" />
                               <span>Edit</span>
@@ -457,7 +480,7 @@ export const VaultView: React.FC = () => {
                                 setItemToMove(item);
                                 setActiveMenuId(null);
                               }}
-                              className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--text-primary)]"
+                              className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--text-primary)] transition-colors"
                             >
                               <FolderInput className="w-3.5 h-3.5" />
                               <span>Move to Folder</span>
@@ -467,7 +490,7 @@ export const VaultView: React.FC = () => {
                                 setItemToDelete(item);
                                 setActiveMenuId(null);
                               }}
-                              className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--accent-rust)]"
+                              className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--accent-rust)] transition-colors"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                               <span>Delete</span>
@@ -484,17 +507,19 @@ export const VaultView: React.FC = () => {
         ) : (
           /* LIST VIEW */
           <div className="bg-[var(--bg-card)] border-keepeit rounded-keepeit divide-y divide-keepeit overflow-hidden">
-            {filteredCredentials.map((item) => {
+            {filteredCredentials.map((item, index) => {
               const isRevealed = !!revealedPasswordIds[item.id];
               const folder = vaultData.folders.find((f) => f.id === item.folderId);
               const avatarBg = getHashColor(item.title);
               const letter = item.title ? item.title.charAt(0).toUpperCase() : '?';
+              const isCopied = copiedItemId === item.id;
 
               return (
                 <div
                   key={item.id}
                   onClick={() => setItemDetail(item)}
-                  className="p-3 sm:p-4 hover:bg-[var(--bg-surface-hover)] transition-colors flex items-center justify-between gap-3 cursor-pointer group"
+                  style={{ animationDelay: `${index * 35}ms` }}
+                  className="p-3 sm:p-4 hover:bg-[var(--bg-surface-hover)] transition-all duration-150 active:scale-[0.99] flex items-center justify-between gap-3 cursor-pointer group animate-[fadeInUp_0.25s_ease-out_forwards]"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div
@@ -539,23 +564,31 @@ export const VaultView: React.FC = () => {
 
                     <button
                       onClick={() => handleToggleRevealPassword(item.id)}
-                      className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
+                      className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit transition-all active:scale-95"
                       title={isRevealed ? 'Hide Password' : 'Reveal Password (15s)'}
                     >
                       {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
 
                     <button
-                      onClick={() => handleCopyPassword(item.password)}
-                      className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit"
+                      onClick={() => handleCopyPassword(item.password, item.id)}
+                      className={`p-1.5 rounded-keepeit transition-all duration-150 ${
+                        isCopied
+                          ? 'scale-110 text-emerald-500 bg-emerald-500/10'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] active:scale-95'
+                      }`}
                       title="Copy Password"
                     >
-                      <Copy className="w-4 h-4" />
+                      {isCopied ? (
+                        <Check className="w-4 h-4 animate-checkmark-pop text-emerald-500" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
                     </button>
 
                     <button
                       onClick={() => toggleFavorite(item.id)}
-                      className={`p-1.5 rounded-keepeit ${
+                      className={`p-1.5 rounded-keepeit transition-all active:scale-90 ${
                         item.isFavorite ? 'text-amber-500' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                       }`}
                       title={item.isFavorite ? 'Unfavorite' : 'Favorite'}
@@ -565,7 +598,7 @@ export const VaultView: React.FC = () => {
 
                     <button
                       onClick={() => handleOpenEditModal(item)}
-                      className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit hidden sm:block"
+                      className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-keepeit hidden sm:block transition-all active:scale-95"
                       title="Edit"
                     >
                       <Edit className="w-4 h-4" />
@@ -573,7 +606,7 @@ export const VaultView: React.FC = () => {
 
                     <button
                       onClick={() => setItemToDelete(item)}
-                      className="p-1.5 text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 rounded-keepeit hidden sm:block"
+                      className="p-1.5 text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 rounded-keepeit hidden sm:block transition-all active:scale-95"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -640,10 +673,18 @@ export const VaultView: React.FC = () => {
                     {revealedPasswordIds[itemDetail.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   <button
-                    onClick={() => handleCopyPassword(itemDetail.password)}
-                    className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    onClick={() => handleCopyPassword(itemDetail.password, itemDetail.id)}
+                    className={`p-1 rounded-keepeit transition-all duration-150 ${
+                      copiedItemId === itemDetail.id
+                        ? 'scale-110 text-emerald-500 bg-emerald-500/10'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95'
+                    }`}
                   >
-                    <Copy className="w-4 h-4" />
+                    {copiedItemId === itemDetail.id ? (
+                      <Check className="w-4 h-4 animate-checkmark-pop text-emerald-500" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -680,16 +721,25 @@ export const VaultView: React.FC = () => {
                 onClick={() => {
                   setItemToDelete(itemDetail);
                 }}
-                className="px-3 py-1.5 text-xs font-mono-label text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 rounded-keepeit"
+                className="px-3 py-1.5 text-xs font-mono-label text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 rounded-keepeit transition-all active:scale-95"
               >
                 DELETE
               </button>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleCopyPassword(itemDetail.password)}
-                  className="px-3 py-1.5 bg-[var(--bg-surface)] border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)]"
+                  onClick={() => handleCopyPassword(itemDetail.password, itemDetail.id)}
+                  className={`px-3 py-1.5 bg-[var(--bg-surface)] border-keepeit rounded-keepeit text-xs font-mono-label text-[var(--text-primary)] transition-all active:scale-95 flex items-center gap-1.5 ${
+                    copiedItemId === itemDetail.id ? 'text-emerald-500 border-emerald-500/30' : ''
+                  }`}
                 >
-                  COPY PASSWORD
+                  {copiedItemId === itemDetail.id ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-500 animate-checkmark-pop" />
+                      <span>COPIED</span>
+                    </>
+                  ) : (
+                    <span>COPY PASSWORD</span>
+                  )}
                 </button>
                 <button
                   onClick={() => handleOpenEditModal(itemDetail)}

@@ -64,6 +64,10 @@ export const NotesView: React.FC = () => {
   // Tag Input State
   const [tagInput, setTagInput] = useState('');
 
+  // Copy Note feedback state (1.2s reset)
+  const [isCopiedNote, setIsCopiedNote] = useState(false);
+  const copyNoteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Refs for autosave timer & contenteditable editor ref
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -182,8 +186,24 @@ export const NotesView: React.FC = () => {
   useEffect(() => {
     return () => {
       if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+      if (copyNoteTimerRef.current) clearTimeout(copyNoteTimerRef.current);
     };
   }, []);
+
+  // Copy Note Content Handler with 1.2s checkmark pop
+  const handleCopyNoteContent = () => {
+    if (!currentNote) return;
+    const textToCopy = `${editorTitle ? `# ${editorTitle}\n\n` : ''}${stripHtmlAndMarkdown(editorContent)}`;
+    navigator.clipboard.writeText(textToCopy);
+
+    if (copyNoteTimerRef.current) clearTimeout(copyNoteTimerRef.current);
+    setIsCopiedNote(true);
+    copyNoteTimerRef.current = setTimeout(() => {
+      setIsCopiedNote(false);
+    }, 1200);
+
+    showToast('Note content copied to clipboard.', 'success');
+  };
 
   // Form field change handlers with autosave trigger
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -562,7 +582,7 @@ export const NotesView: React.FC = () => {
                 </button>
               </div>
             ) : (
-              filteredNotes.map((note) => {
+              filteredNotes.map((note, index) => {
                 const isSelected = note.id === selectedNoteId;
                 const folder = noteFolders.find((f) => f.id === note.folderId);
                 const firstLine = getFirstLinePreview(note.content);
@@ -575,7 +595,8 @@ export const NotesView: React.FC = () => {
                   <div
                     key={note.id}
                     onClick={() => setSelectedNoteId(note.id)}
-                    className={`p-3.5 cursor-pointer transition-colors relative group ${
+                    style={{ animationDelay: `${index * 35}ms` }}
+                    className={`p-3.5 cursor-pointer transition-all duration-150 active:scale-[0.98] relative group animate-[fadeInUp_0.25s_ease-out_forwards] ${
                       isSelected
                         ? 'bg-[var(--bg-card)] border-l-4 border-l-[var(--accent-seal)] shadow-2xs'
                         : 'hover:bg-[var(--bg-card)]/60'
@@ -588,7 +609,7 @@ export const NotesView: React.FC = () => {
                       <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => toggleFavorite(note.id)}
-                          className={`p-0.5 rounded-keepeit ${
+                          className={`p-0.5 rounded-keepeit transition-all duration-150 active:scale-90 ${
                             note.isFavorite
                               ? 'text-amber-500'
                               : 'text-[var(--text-muted)] opacity-0 group-hover:opacity-100 hover:text-[var(--text-primary)]'
@@ -601,7 +622,7 @@ export const NotesView: React.FC = () => {
                         <div className="relative">
                           <button
                             onClick={() => setActiveMenuNoteId(activeMenuNoteId === note.id ? null : note.id)}
-                            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                            className="p-0.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-keepeit transition-all active:scale-95"
                           >
                             <MoreVertical className="w-3.5 h-3.5" />
                           </button>
@@ -613,14 +634,14 @@ export const NotesView: React.FC = () => {
                                   setNoteToMove(note);
                                   setActiveMenuNoteId(null);
                                 }}
-                                className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2"
+                                className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 transition-colors"
                               >
                                 <FolderInput className="w-3.5 h-3.5" />
                                 <span>Move</span>
                               </button>
                               <button
                                 onClick={() => handleDuplicateNote(note)}
-                                className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2"
+                                className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 transition-colors"
                               >
                                 <Copy className="w-3.5 h-3.5" />
                                 <span>Duplicate</span>
@@ -630,7 +651,7 @@ export const NotesView: React.FC = () => {
                                   setNoteToDelete(note);
                                   setActiveMenuNoteId(null);
                                 }}
-                                className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--accent-rust)]"
+                                className="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-surface)] flex items-center gap-2 text-[var(--accent-rust)] transition-colors"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 <span>Delete</span>
@@ -748,12 +769,29 @@ export const NotesView: React.FC = () => {
                       <Plus className="w-4 h-4" />
                     </button>
 
+                    {/* Copy Note Button with Checkmark Pop */}
+                    <button
+                      onClick={handleCopyNoteContent}
+                      className={`p-1.5 rounded-keepeit transition-all duration-150 min-h-[34px] min-w-[34px] flex items-center justify-center ${
+                        isCopiedNote
+                          ? 'scale-110 text-emerald-500 bg-emerald-500/10'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] active:scale-95'
+                      }`}
+                      title="Copy Note Content"
+                    >
+                      {isCopiedNote ? (
+                        <Check className="w-4 h-4 animate-checkmark-pop text-emerald-500" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
+
                     <button
                       onClick={handleToggleFav}
-                      className={`p-1.5 rounded-keepeit ${
+                      className={`p-1.5 rounded-keepeit transition-all duration-150 active:scale-95 ${
                         editorIsFavorite
                           ? 'text-amber-500'
-                          : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]'
                       }`}
                       title={editorIsFavorite ? 'Unfavorite' : 'Favorite'}
                     >
@@ -762,7 +800,7 @@ export const NotesView: React.FC = () => {
 
                     <button
                       onClick={() => setNoteToDelete(currentNote)}
-                      className="p-1.5 text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 rounded-keepeit"
+                      className="p-1.5 text-[var(--accent-rust)] hover:bg-[var(--accent-rust)]/10 rounded-keepeit transition-all duration-150 active:scale-95"
                       title="Delete Note"
                     >
                       <Trash2 className="w-4 h-4" />
