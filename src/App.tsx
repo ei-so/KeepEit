@@ -47,11 +47,12 @@ function VaultAppContent() {
 
   // Panic Shake to Lock detector
   useShakeDetector({
-    onPanic: () => {
+    onShake: () => {
       lockVault();
       showToast('Vault locked via Panic Shake', 'info');
     },
-    enabled: Boolean(vaultData?.settings?.panicShakeEnabled) && isUnlocked,
+    enabled: Boolean(vaultData?.settings?.panicShakeEnabled && isUnlocked),
+    threshold: 11,
   });
 
   // App Switcher Privacy Screen Shield on backgrounding/blur with bypass support
