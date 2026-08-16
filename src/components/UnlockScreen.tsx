@@ -295,12 +295,12 @@ export const UnlockScreen: React.FC = () => {
           <div>
             {setupStep === 1 && (
               <form onSubmit={handleSetupStep1} className="space-y-4">
-                <div className="p-3 bg-[var(--bg-surface)] border-keepeit rounded-keepeit text-xs text-[var(--text-muted)] leading-relaxed">
+                <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-200 dark:border-neutral-800 text-xs text-[var(--text-muted)] leading-relaxed">
                   <p className="font-semibold text-[var(--text-primary)] mb-1 flex items-center gap-1.5">
                     <ShieldCheck className="w-4 h-4 text-[var(--accent-seal)]" />
-                    Zero-Knowledge Local Storage
+                    100% Private & Zero-Knowledge
                   </p>
-                  Your master password derives an AES-GCM 256-bit key using PBKDF2 (600,000 iterations). It is held strictly in volatile memory.
+                  Only you hold the key to your vault. Your data is encrypted directly on your device—not even we can see, read, or recover your master password.
                 </div>
 
                 <div>
