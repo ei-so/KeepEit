@@ -124,6 +124,7 @@ export interface VaultSettings {
   fontScale?: 'S' | 'M' | 'L';
   showPasswordHint: boolean;
   clearClipboardSeconds: number; // e.g. 30
+  panicShakeEnabled?: boolean;
 }
 
 export interface VaultData {

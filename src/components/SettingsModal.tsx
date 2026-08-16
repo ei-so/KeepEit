@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useVault } from '../hooks/useVault';
 import { exportVaultToCSV, getCSVTemplate, parseCSVToVaultItems } from '../lib/csv';
 import { getStorageEstimateInfo, checkAndRequestPersistedStorage, getBackupAgeInDays, StorageEstimateResult } from '../lib/persistence';
+import { requestMotionPermission } from '../lib/deviceSensors';
 import { InstallButton } from './InstallPrompt';
 import {
   X,
@@ -30,6 +31,7 @@ import {
   ShieldCheck,
   Smartphone,
   Fingerprint,
+  Vibrate,
 } from 'lucide-react';
 
 export type SettingsTab = 'account' | 'appearance' | 'security' | 'data' | 'about';
@@ -89,6 +91,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [passkeyStatusMsg, setPasskeyStatusMsg] = useState<string | null>(null);
   const [passkeyErrorMsg, setPasskeyErrorMsg] = useState<string | null>(null);
   const [showPasskeyRemoveConfirm, setShowPasskeyRemoveConfirm] = useState(false);
+
+  // Panic Shake State & Handler
+  const [shakePermissionError, setShakePermissionError] = useState<string | null>(null);
+
+  const handleTogglePanicShake = async () => {
+    setShakePermissionError(null);
+    const currentlyEnabled = Boolean(vaultData?.settings?.panicShakeEnabled);
+
+    if (currentlyEnabled) {
+      await updateSettings({ panicShakeEnabled: false });
+    } else {
+      const granted = await requestMotionPermission();
+      if (granted) {
+        await updateSettings({ panicShakeEnabled: true });
+      } else {
+        await updateSettings({ panicShakeEnabled: false });
+        setShakePermissionError('Motion sensor permission was denied. Please allow motion sensors in your browser or device settings.');
+      }
+    }
+  };
 
   const handleEnrollPasskey = async () => {
     setPasskeyErrorMsg(null);
@@ -672,6 +694,41 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     Passkey unlock is exactly as strong as the device's biometric gate plus the fact that the wrapped DEK sits next to the ciphertext. Someone with the unlocked device can open the vault. This is the same model as native vaults; it is a convenience path, not an increase in security. userVerification is 'required' so a passkey alone, without biometrics or a device PIN, cannot unwrap anything.
                   </p>
                 </div>
+              </div>
+
+              {/* Panic Shake to Lock Section */}
+              <div className="space-y-3 p-4 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit">
+                <div className="flex items-center justify-between">
+                  <label className="font-mono-label text-[var(--text-primary)] font-bold flex items-center gap-1.5 text-xs">
+                    <Vibrate className="w-4 h-4 text-[var(--accent-seal)]" />
+                    PANIC SHAKE TO LOCK VAULT
+                  </label>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={Boolean(vaultData.settings?.panicShakeEnabled)}
+                    onClick={handleTogglePanicShake}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--accent-seal)] focus:ring-offset-2 focus:ring-offset-[var(--bg-card)] ${
+                      vaultData.settings?.panicShakeEnabled ? 'bg-[var(--accent-seal)]' : 'bg-zinc-700/60'
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                        vaultData.settings?.panicShakeEnabled ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
+                  Shake your phone vigorously to instantly lock the vault and hide all sensitive data.
+                </p>
+
+                {shakePermissionError && (
+                  <div className="p-2.5 bg-red-500/10 border border-[var(--accent-rust)] text-[var(--accent-rust)] text-xs rounded-keepeit font-mono">
+                    {shakePermissionError}
+                  </div>
+                )}
               </div>
 
               {/* Auto-Lock Minutes */}

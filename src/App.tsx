@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { VaultProvider, useVault } from './hooks/useVault';
-import { ToastProvider } from './components/Toast';
+import { ToastProvider, useToast } from './components/Toast';
+import { useShakeDetector } from './hooks/useShakeDetector';
 import { Header } from './components/Header';
 import { Sidebar, AppRoute } from './components/Sidebar';
 import { SealBar } from './components/SealBar';
@@ -38,8 +39,18 @@ import {
 } from 'lucide-react';
 
 function VaultAppContent() {
-  const { isUnlocked } = useVault();
+  const { isUnlocked, lockVault, vaultData } = useVault();
+  const { showToast } = useToast();
   const { canInstallIos, isIosBannerDismissed, dismissIosBanner, showIosSheet, setShowIosSheet } = usePWAInstall();
+
+  // Panic Shake to Lock detector
+  useShakeDetector(
+    () => {
+      lockVault();
+      showToast('Vault locked via Panic Shake', 'info');
+    },
+    Boolean(vaultData?.settings?.panicShakeEnabled) && isUnlocked
+  );
 
   // Route & Navigation State - default to Dashboard Screen
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('dashboard');

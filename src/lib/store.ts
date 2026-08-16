@@ -161,6 +161,7 @@ export async function create(
       theme: 'light',
       showPasswordHint: false,
       clearClipboardSeconds: 30,
+      panicShakeEnabled: false,
     },
   };
 
