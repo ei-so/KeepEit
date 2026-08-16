@@ -1,42 +1,63 @@
 import { useEffect, useRef } from 'react';
+import { requestMotionPermission } from '../lib/deviceSensors';
 
-interface ShakeDetectorOptions {
-  onShake: () => void;
+// Calibrated Sensitivity & Multi-Shake Validation Constants
+export const THRESHOLD = 9.0;
+export const REQUIRED_SHAKES = 2;
+export const SHAKE_TIMEOUT = 500;
+export const COOLDOWN = 1000;
+
+export interface ShakeDetectorOptions {
+  onPanic?: () => void;
+  onShake?: () => void;
   enabled: boolean;
   threshold?: number;
+  requiredShakes?: number;
+  shakeTimeout?: number;
   cooldownMs?: number;
 }
 
 export function useShakeDetector({
+  onPanic,
   onShake,
   enabled,
-  threshold = 15,
-  cooldownMs = 1500,
+  threshold = THRESHOLD,
+  requiredShakes = REQUIRED_SHAKES,
+  shakeTimeout = SHAKE_TIMEOUT,
+  cooldownMs = COOLDOWN,
 }: ShakeDetectorOptions) {
-  const onShakeRef = useRef(onShake);
+  const onPanicCallbackRef = useRef(onPanic || onShake);
   const enabledRef = useRef(enabled);
-  const lastShakeTimeRef = useRef<number>(0);
   const lastCoordsRef = useRef<{ x: number | null; y: number | null; z: number | null }>({
     x: null,
     y: null,
     z: null,
   });
 
-  // Keep refs synchronized with latest props
+  const shakeCountRef = useRef<number>(0);
+  const lastShakeTimeRef = useRef<number>(0);
+  const lastTriggerTimeRef = useRef<number>(0);
+
+  // Keep callback and enabled refs synchronized
   useEffect(() => {
-    onShakeRef.current = onShake;
+    onPanicCallbackRef.current = onPanic || onShake;
     enabledRef.current = enabled;
-  }, [onShake, enabled]);
+  }, [onPanic, onShake, enabled]);
 
   useEffect(() => {
     if (!enabled) {
-      // Clear previous coordinates when disabled/locked
+      // Reset coordinates and shake counters when disabled
       lastCoordsRef.current = { x: null, y: null, z: null };
+      shakeCountRef.current = 0;
+      lastShakeTimeRef.current = 0;
       return;
     }
 
-    // Set an initial cooldown on mount/unlock to prevent Face ID lift from locking
-    lastShakeTimeRef.current = Date.now();
+    // Set initial cooldown anchor when enabled/unlocked to avoid accidental trigger
+    lastTriggerTimeRef.current = Date.now();
+    shakeCountRef.current = 0;
+    lastShakeTimeRef.current = 0;
+    lastCoordsRef.current = { x: null, y: null, z: null };
 
     const handleMotion = (event: DeviceMotionEvent) => {
       if (!enabledRef.current) return;
@@ -46,16 +67,35 @@ export function useShakeDetector({
 
       const { x, y, z } = current;
       const { x: lastX, y: lastY, z: lastZ } = lastCoordsRef.current;
+      const now = Date.now();
 
       if (lastX !== null && lastY !== null && lastZ !== null) {
+        // Multi-axis acceleration delta calculation
         const delta = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
-        const now = Date.now();
 
-        if (delta > threshold && now - lastShakeTimeRef.current > cooldownMs) {
-          lastShakeTimeRef.current = now;
-          // Reset coordinates before executing lock
-          lastCoordsRef.current = { x: null, y: null, z: null };
-          onShakeRef.current();
+        // Ignore events if within cooldown period
+        if (now - lastTriggerTimeRef.current >= cooldownMs) {
+          if (delta > threshold) {
+            // Check sliding window timeout
+            if (now - lastShakeTimeRef.current > shakeTimeout) {
+              shakeCountRef.current = 1;
+            } else {
+              shakeCountRef.current += 1;
+            }
+            lastShakeTimeRef.current = now;
+
+            // Trigger panic callback when required directional peaks are reached
+            if (shakeCountRef.current >= requiredShakes) {
+              lastTriggerTimeRef.current = now;
+              shakeCountRef.current = 0;
+              lastShakeTimeRef.current = 0;
+              lastCoordsRef.current = { x: null, y: null, z: null };
+
+              if (onPanicCallbackRef.current) {
+                onPanicCallbackRef.current();
+              }
+            }
+          }
         }
       }
 
@@ -67,5 +107,10 @@ export function useShakeDetector({
     return () => {
       window.removeEventListener('devicemotion', handleMotion);
     };
-  }, [enabled, threshold, cooldownMs]);
+  }, [enabled, threshold, requiredShakes, shakeTimeout, cooldownMs]);
+
+  return {
+    requestPermission: requestMotionPermission,
+  };
 }
+

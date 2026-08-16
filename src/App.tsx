@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { VaultProvider, useVault } from './hooks/useVault';
 import { ToastProvider, useToast } from './components/Toast';
 import { useShakeDetector } from './hooks/useShakeDetector';
+import { usePrivacyShield } from './hooks/usePrivacyShield';
 import { Header } from './components/Header';
 import { Sidebar, AppRoute } from './components/Sidebar';
 import { SealBar } from './components/SealBar';
@@ -46,40 +47,15 @@ function VaultAppContent() {
 
   // Panic Shake to Lock detector
   useShakeDetector({
-    onShake: () => {
+    onPanic: () => {
       lockVault();
       showToast('Vault locked via Panic Shake', 'info');
     },
     enabled: Boolean(vaultData?.settings?.panicShakeEnabled) && isUnlocked,
   });
 
-  // App Switcher Privacy Screen Shield on backgrounding/blur
-  const [isBackgrounded, setIsBackgrounded] = useState<boolean>(false);
-
-  useEffect(() => {
-    const handleHide = () => setIsBackgrounded(true);
-    const handleShow = () => setIsBackgrounded(false);
-
-    const handleVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        handleHide();
-      } else {
-        handleShow();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibility);
-    window.addEventListener('blur', handleHide);
-    window.addEventListener('focus', handleShow);
-    window.addEventListener('pagehide', handleHide);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibility);
-      window.removeEventListener('blur', handleHide);
-      window.removeEventListener('focus', handleShow);
-      window.removeEventListener('pagehide', handleHide);
-    };
-  }, []);
+  // App Switcher Privacy Screen Shield on backgrounding/blur with bypass support
+  const { isBackgrounded } = usePrivacyShield({ enabled: isUnlocked });
 
   // Route & Navigation State - default to Dashboard Screen
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('dashboard');

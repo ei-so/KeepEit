@@ -18,9 +18,63 @@
     <meta property="og:description" content="Local-first encrypted vault and personal workspace." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
+    <script>
+      (function () {
+        window.__keepEitPrivacyShieldBypass = false;
+        var setBackgrounded = function (isBg) {
+          if (window.__keepEitPrivacyShieldBypass && isBg) return;
+          if (document.body) {
+            if (isBg) {
+              document.body.classList.add('is-backgrounded');
+            } else {
+              document.body.classList.remove('is-backgrounded');
+            }
+          }
+        };
+
+        window.addEventListener('blur', function () { setBackgrounded(true); }, { passive: true });
+        window.addEventListener('focus', function () { setBackgrounded(false); }, { passive: true });
+        window.addEventListener('pagehide', function () { setBackgrounded(true); }, { passive: true });
+        window.addEventListener('pageshow', function () { setBackgrounded(false); }, { passive: true });
+        document.addEventListener('visibilitychange', function () {
+          setBackgrounded(document.visibilityState === 'hidden');
+        }, { passive: true });
+
+        // Global bypass for file selection inputs
+        document.addEventListener('click', function (e) {
+          var target = e.target;
+          if (
+            target &&
+            ((target.tagName === 'INPUT' && target.type === 'file') ||
+              (target.closest && target.closest('input[type="file"]')) ||
+              target.getAttribute('data-privacy-bypass') === 'true')
+          ) {
+            window.__keepEitPrivacyShieldBypass = true;
+            setTimeout(function () {
+              window.__keepEitPrivacyShieldBypass = false;
+            }, 3500);
+          }
+        }, { capture: true, passive: true });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Pre-rendered zero-shift Privacy Shield overlay for instant App Switcher masking -->
+    <div id="privacy-shield" class="privacy-shield" aria-hidden="true">
+      <div class="shield-lock-icon">
+        <div class="shield-icon-container">
+          <svg class="shield-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v4"/>
+            <path d="M12 16h.01"/>
+          </svg>
+        </div>
+        <p class="shield-text">Vault Protected</p>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
