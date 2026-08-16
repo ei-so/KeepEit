@@ -44,13 +44,13 @@ function VaultAppContent() {
   const { canInstallIos, isIosBannerDismissed, dismissIosBanner, showIosSheet, setShowIosSheet } = usePWAInstall();
 
   // Panic Shake to Lock detector
-  useShakeDetector(
-    () => {
+  useShakeDetector({
+    onShake: () => {
       lockVault();
       showToast('Vault locked via Panic Shake', 'info');
     },
-    Boolean(vaultData?.settings?.panicShakeEnabled) && isUnlocked
-  );
+    enabled: Boolean(vaultData?.settings?.panicShakeEnabled) && isUnlocked,
+  });
 
   // Route & Navigation State - default to Dashboard Screen
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('dashboard');

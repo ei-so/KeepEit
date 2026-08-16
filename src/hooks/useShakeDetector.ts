@@ -1,46 +1,60 @@
 import { useEffect, useRef } from 'react';
 
-/**
- * Reusable React hook for cross-platform shake detection using DeviceMotionEvent
- * @param onShake Callback executed when a shake gesture exceeds the threshold
- * @param enabled Whether motion listening is currently active
- * @param threshold Sensitivity threshold across delta X/Y/Z (default: 22)
- */
-export function useShakeDetector(
-  onShake: () => void,
-  enabled: boolean,
-  threshold: number = 22
-) {
-  const onShakeRef = useRef(onShake);
-  onShakeRef.current = onShake;
+interface ShakeDetectorOptions {
+  onShake: () => void;
+  enabled: boolean;
+  threshold?: number;
+  cooldownMs?: number;
+}
 
-  const lastCoordsRef = useRef<{ x: number; y: number; z: number } | null>(null);
+export function useShakeDetector({
+  onShake,
+  enabled,
+  threshold = 24,
+  cooldownMs = 2000,
+}: ShakeDetectorOptions) {
+  const onShakeRef = useRef(onShake);
+  const enabledRef = useRef(enabled);
   const lastShakeTimeRef = useRef<number>(0);
+  const lastCoordsRef = useRef<{ x: number | null; y: number | null; z: number | null }>({
+    x: null,
+    y: null,
+    z: null,
+  });
+
+  // Keep refs synchronized with latest props
+  useEffect(() => {
+    onShakeRef.current = onShake;
+    enabledRef.current = enabled;
+  }, [onShake, enabled]);
 
   useEffect(() => {
-    if (!enabled || typeof window === 'undefined') {
-      lastCoordsRef.current = null;
+    if (!enabled) {
+      // Clear previous coordinates when disabled/locked
+      lastCoordsRef.current = { x: null, y: null, z: null };
       return;
     }
 
+    // Set an initial cooldown on mount/unlock to prevent Face ID lift from locking
+    lastShakeTimeRef.current = Date.now();
+
     const handleMotion = (event: DeviceMotionEvent) => {
-      const acc = event.accelerationIncludingGravity || event.acceleration;
-      if (!acc) return;
+      if (!enabledRef.current) return;
 
-      const x = acc.x ?? 0;
-      const y = acc.y ?? 0;
-      const z = acc.z ?? 0;
+      const current = event.accelerationIncludingGravity || event.acceleration;
+      if (!current || current.x === null || current.y === null || current.z === null) return;
 
-      if (lastCoordsRef.current !== null) {
-        const deltaX = Math.abs(x - lastCoordsRef.current.x);
-        const deltaY = Math.abs(y - lastCoordsRef.current.y);
-        const deltaZ = Math.abs(z - lastCoordsRef.current.z);
-        const change = deltaX + deltaY + deltaZ;
+      const { x, y, z } = current;
+      const { x: lastX, y: lastY, z: lastZ } = lastCoordsRef.current;
 
+      if (lastX !== null && lastY !== null && lastZ !== null) {
+        const delta = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
         const now = Date.now();
-        // Trigger shake if threshold is met and cooldown (1500ms) has elapsed
-        if (change > threshold && now - lastShakeTimeRef.current > 1500) {
+
+        if (delta > threshold && now - lastShakeTimeRef.current > cooldownMs) {
           lastShakeTimeRef.current = now;
+          // Reset coordinates before executing lock
+          lastCoordsRef.current = { x: null, y: null, z: null };
           onShakeRef.current();
         }
       }
@@ -48,11 +62,10 @@ export function useShakeDetector(
       lastCoordsRef.current = { x, y, z };
     };
 
-    window.addEventListener('devicemotion', handleMotion);
+    window.addEventListener('devicemotion', handleMotion, { passive: true });
 
     return () => {
       window.removeEventListener('devicemotion', handleMotion);
-      lastCoordsRef.current = null;
     };
-  }, [enabled, threshold]);
+  }, [enabled, threshold, cooldownMs]);
 }
