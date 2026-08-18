@@ -12,6 +12,7 @@ import {
   Wallet,
   CheckSquare,
   X,
+  Bell,
 } from 'lucide-react';
 
 type CalendarViewMode = 'month' | 'week' | 'year';
@@ -538,7 +539,17 @@ export const CalendarView: React.FC = () => {
                     >
                       <div className="min-w-0 space-y-0.5">
                         <p className="font-semibold text-xs text-[var(--text-primary)] truncate">{t.title}</p>
-                        <p className="font-mono text-[10px] text-[var(--text-muted)]">DUE: {t.dueDate}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-mono text-[10px] text-[var(--text-muted)]">
+                            DUE: {t.dueDate}{t.dueTime ? ` @ ${t.dueTime}` : ''}
+                          </p>
+                          {t.alarmEnabled && (
+                            <span className="flex items-center gap-0.5 text-[9px] text-amber-500 font-mono">
+                              <Bell className="w-2.5 h-2.5" />
+                              {t.reminderTime || t.dueTime || 'ALARM'}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span
                         className={`px-1.5 py-0.5 text-[9px] font-mono-label rounded-keepeit text-white ${getPriorityBadgeClass(

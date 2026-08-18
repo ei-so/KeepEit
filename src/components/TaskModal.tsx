@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TaskItem, TaskPriority, TaskStatus, Folder } from '../types/vault';
 import { useVault } from '../hooks/useVault';
 import { useToast } from './Toast';
-import { X, Calendar, CheckSquare, Tag as TagIcon, Folder as FolderIcon, AlertCircle, Star, Trash2 } from 'lucide-react';
+import { requestNotificationPermission } from '../lib/notifications';
+import { X, Calendar, CheckSquare, Tag as TagIcon, Folder as FolderIcon, AlertCircle, Star, Trash2, Bell, BellRing, Clock } from 'lucide-react';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -25,6 +26,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [status, setStatus] = useState<TaskStatus>('todo');
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [dueDate, setDueDate] = useState('');
+  const [dueTime, setDueTime] = useState('');
+  const [reminderDate, setReminderDate] = useState('');
+  const [reminderTime, setReminderTime] = useState('');
+  const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [folderId, setFolderId] = useState<string | undefined>(undefined);
   const [tags, setTags] = useState<string[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -41,6 +46,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setStatus(taskToEdit.status || 'todo');
       setPriority(taskToEdit.priority || 'medium');
       setDueDate(taskToEdit.dueDate || '');
+      setDueTime(taskToEdit.dueTime || '');
+      setReminderDate(taskToEdit.reminderDate || taskToEdit.dueDate || '');
+      setReminderTime(taskToEdit.reminderTime || taskToEdit.dueTime || '09:00');
+      setAlarmEnabled(Boolean(taskToEdit.alarmEnabled));
       setFolderId(taskToEdit.folderId);
       setTags(taskToEdit.tags || []);
       setIsFavorite(taskToEdit.isFavorite || false);
@@ -50,6 +59,10 @@ export const TaskModal: React.FC<TaskModalProps> = ({
       setStatus(initialStatus);
       setPriority('medium');
       setDueDate('');
+      setDueTime('');
+      setReminderDate('');
+      setReminderTime('09:00');
+      setAlarmEnabled(false);
       setFolderId(undefined);
       setTags([]);
       setIsFavorite(false);
@@ -57,6 +70,26 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   }, [taskToEdit, initialStatus, isOpen]);
 
   if (!isOpen) return null;
+
+  const handleToggleAlarm = async () => {
+    const nextVal = !alarmEnabled;
+    setAlarmEnabled(nextVal);
+    if (nextVal) {
+      const granted = await requestNotificationPermission();
+      if (granted) {
+        showToast('Alarm & notifications enabled for this task.', 'success');
+      } else {
+        showToast('Audio chime enabled. (Browser notifications not permitted)', 'info');
+      }
+      // If no reminder date set, default to due date or today
+      if (!reminderDate) {
+        setReminderDate(dueDate || new Date().toISOString().slice(0, 10));
+      }
+      if (!reminderTime) {
+        setReminderTime(dueTime || '09:00');
+      }
+    }
+  };
 
   const handleAddTag = () => {
     const clean = tagInput.trim().replace(/^#/, '');
@@ -84,6 +117,13 @@ export const TaskModal: React.FC<TaskModalProps> = ({
     }
 
     if (taskToEdit) {
+      // If alarm was toggled on or dates were modified, allow it to fire
+      const isAlarmReconfigured =
+        alarmEnabled &&
+        (!taskToEdit.alarmEnabled ||
+          taskToEdit.reminderDate !== (reminderDate || dueDate) ||
+          taskToEdit.reminderTime !== (reminderTime || dueTime));
+
       await updateTask({
         ...taskToEdit,
         title: title.trim(),
@@ -91,6 +131,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         status,
         priority,
         dueDate: dueDate || undefined,
+        dueTime: dueTime || undefined,
+        reminderDate: alarmEnabled ? (reminderDate || dueDate || undefined) : undefined,
+        reminderTime: alarmEnabled ? (reminderTime || dueTime || '09:00') : undefined,
+        alarmEnabled,
+        alarmFired: isAlarmReconfigured ? false : taskToEdit.alarmFired,
         folderId,
         tags,
         isFavorite,
@@ -103,6 +148,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         status,
         priority,
         dueDate: dueDate || undefined,
+        dueTime: dueTime || undefined,
+        reminderDate: alarmEnabled ? (reminderDate || dueDate || undefined) : undefined,
+        reminderTime: alarmEnabled ? (reminderTime || dueTime || '09:00') : undefined,
+        alarmEnabled,
+        alarmFired: false,
         folderId,
         tags,
         isFavorite,
@@ -170,8 +220,8 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             />
           </div>
 
-          {/* Grid: Status, Priority, Due Date */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Grid: Status, Priority, Due Date & Time */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Status */}
             <div>
               <label className="block text-[10px] font-mono-label text-[var(--text-muted)] mb-1">
@@ -206,16 +256,99 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
             {/* Due Date */}
             <div>
-              <label className="block text-[10px] font-mono-label text-[var(--text-muted)] mb-1">
+              <label className="block text-[10px] font-mono-label text-[var(--text-muted)] mb-1 flex items-center gap-1">
+                <Calendar className="w-3 h-3 text-[var(--accent-seal)]" />
                 DUE DATE
               </label>
               <input
                 type="date"
                 value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+                onChange={(e) => {
+                  setDueDate(e.target.value);
+                  if (!reminderDate) setReminderDate(e.target.value);
+                }}
                 className="w-full bg-[var(--bg-surface)] border-keepeit rounded-keepeit px-2 py-1.5 text-xs font-mono text-[var(--text-primary)]"
               />
             </div>
+
+            {/* Due Time */}
+            <div>
+              <label className="block text-[10px] font-mono-label text-[var(--text-muted)] mb-1 flex items-center gap-1">
+                <Clock className="w-3 h-3 text-[var(--accent-seal)]" />
+                DUE TIME
+              </label>
+              <input
+                type="time"
+                value={dueTime}
+                onChange={(e) => {
+                  setDueTime(e.target.value);
+                  if (!reminderTime) setReminderTime(e.target.value);
+                }}
+                className="w-full bg-[var(--bg-surface)] border-keepeit rounded-keepeit px-2 py-1.5 text-xs font-mono text-[var(--text-primary)]"
+              />
+            </div>
+          </div>
+
+          {/* Alarm and Push Notification Card */}
+          <div className="p-3 bg-[var(--bg-surface)] border border-keepeit rounded-keepeit space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {alarmEnabled ? (
+                  <BellRing className="w-4 h-4 text-amber-500 animate-pulse" />
+                ) : (
+                  <Bell className="w-4 h-4 text-[var(--text-muted)]" />
+                )}
+                <div>
+                  <span className="font-semibold text-xs text-[var(--text-primary)] block">
+                    Alert Alarm & Notification
+                  </span>
+                  <span className="text-[10px] text-[var(--text-muted)] block">
+                    Synthesizer audio chime + desktop/PWA notification
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleToggleAlarm}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  alarmEnabled ? 'bg-amber-600' : 'bg-zinc-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    alarmEnabled ? 'translate-x-4' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {alarmEnabled && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-keepeit/60">
+                <div>
+                  <label className="block text-[9px] font-mono-label text-[var(--text-muted)] mb-1">
+                    ALARM DATE
+                  </label>
+                  <input
+                    type="date"
+                    value={reminderDate}
+                    onChange={(e) => setReminderDate(e.target.value)}
+                    className="w-full bg-[var(--bg-card)] border-keepeit rounded-keepeit px-2 py-1 text-xs font-mono text-[var(--text-primary)]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[9px] font-mono-label text-[var(--text-muted)] mb-1">
+                    ALARM TIME
+                  </label>
+                  <input
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                    className="w-full bg-[var(--bg-card)] border-keepeit rounded-keepeit px-2 py-1 text-xs font-mono text-[var(--text-primary)]"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Folder Select */}

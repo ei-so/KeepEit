@@ -88,6 +88,11 @@ export interface TaskItem {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate?: string; // YYYY-MM-DD
+  dueTime?: string; // HH:mm
+  reminderDate?: string; // YYYY-MM-DD
+  reminderTime?: string; // HH:mm
+  alarmEnabled?: boolean;
+  alarmFired?: boolean;
   completedAt?: string;
   folderId?: string;
   tags: string[];

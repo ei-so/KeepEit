@@ -18,6 +18,8 @@ import {
   ShieldCheck,
   Clock,
   Sparkles,
+  Bell,
+  BellRing,
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -440,11 +442,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ onNavigate }) => {
                         <p className="font-semibold text-xs text-[var(--text-primary)] truncate">
                           {task.title}
                         </p>
-                        {task.dueDate && (
-                          <p className="font-mono text-[10px] text-[var(--text-muted)]">
-                            DUE: {task.dueDate}
-                          </p>
-                        )}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {task.dueDate && (
+                            <p className="font-mono text-[10px] text-[var(--text-muted)]">
+                              DUE: {task.dueDate}{task.dueTime ? ` @ ${task.dueTime}` : ''}
+                            </p>
+                          )}
+                          {task.alarmEnabled && (
+                            <span
+                              className={`flex items-center gap-1 text-[9px] font-mono ${
+                                task.alarmFired ? 'text-[var(--text-muted)]' : 'text-amber-500'
+                              }`}
+                              title={
+                                task.alarmFired
+                                  ? 'Alarm triggered'
+                                  : `Alarm scheduled: ${task.reminderDate || task.dueDate || ''} ${task.reminderTime || task.dueTime || ''}`
+                              }
+                            >
+                              {task.alarmFired ? (
+                                <Bell className="w-2.5 h-2.5 text-[var(--text-muted)]" />
+                              ) : (
+                                <BellRing className="w-2.5 h-2.5 text-amber-500 animate-pulse" />
+                              )}
+                              <span>{task.reminderTime || task.dueTime || 'ALARM'}</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useVault } from '../hooks/useVault';
 import { evaluatePasswordStrength, generateRecoveryCode } from '../lib/crypto';
+import { requestMotionPermission } from '../lib/deviceSensors';
 import { Logo } from './Logo';
 import {
   Lock,
@@ -124,6 +125,7 @@ export const UnlockScreen: React.FC = () => {
 
     try {
       setIsLoading(true);
+      requestMotionPermission().catch(() => {});
       await createVault(password, hint.trim() || undefined, userName.trim() || undefined);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to initialize encrypted vault.');
@@ -152,6 +154,7 @@ export const UnlockScreen: React.FC = () => {
 
     try {
       setIsLoading(true);
+      requestMotionPermission().catch(() => {});
       await unlockVault(password);
       setFailedAttempts(0);
     } catch (err: any) {
@@ -176,6 +179,7 @@ export const UnlockScreen: React.FC = () => {
 
     try {
       setIsLoading(true);
+      requestMotionPermission().catch(() => {});
       await unlockWithPasskey();
       setFailedAttempts(0);
     } catch (err: any) {
@@ -212,6 +216,7 @@ export const UnlockScreen: React.FC = () => {
 
     try {
       setIsLoading(true);
+      requestMotionPermission().catch(() => {});
       await unlockWithRecoveryCode(recoveryCode);
       setFailedAttempts(0);
     } catch (err: any) {

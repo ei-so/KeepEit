@@ -11,10 +11,9 @@ export async function requestMotionPermission(): Promise<boolean> {
       const permissionState = await (DeviceMotionEvent as any).requestPermission();
       return permissionState === 'granted';
     } catch (err) {
-      console.error('Motion permission error:', err);
+      console.warn('Motion permission request failed:', err);
       return false;
     }
   }
-  // Android & standard desktop browsers grant access automatically
   return true;
 }

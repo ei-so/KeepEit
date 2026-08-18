@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { VaultProvider, useVault } from './hooks/useVault';
 import { ToastProvider, useToast } from './components/Toast';
 import { useShakeDetector } from './hooks/useShakeDetector';
+import { useTaskScheduler } from './hooks/useTaskScheduler';
 import { usePrivacyShield } from './hooks/usePrivacyShield';
 import { Header } from './components/Header';
 import { Sidebar, AppRoute } from './components/Sidebar';
@@ -41,7 +42,7 @@ import {
 } from 'lucide-react';
 
 function VaultAppContent() {
-  const { isUnlocked, lockVault, vaultData } = useVault();
+  const { isUnlocked, lockVault, vaultData, updateTask } = useVault();
   const { showToast } = useToast();
   const { canInstallIos, isIosBannerDismissed, dismissIosBanner, showIosSheet, setShowIosSheet } = usePWAInstall();
 
@@ -53,6 +54,16 @@ function VaultAppContent() {
     },
     enabled: Boolean(vaultData?.settings?.panicShakeEnabled && isUnlocked),
     threshold: 11,
+  });
+
+  // Scheduled Task Alarm & Notification Scheduler
+  useTaskScheduler({
+    enabled: Boolean(isUnlocked && vaultData?.tasks && vaultData.tasks.length > 0),
+    tasks: vaultData?.tasks,
+    onAlarmFired: (task) => {
+      updateTask({ ...task, alarmFired: true });
+      showToast(`Task Reminder: ${task.title}`, 'info');
+    },
   });
 
   // App Switcher Privacy Screen Shield on backgrounding/blur with bypass support

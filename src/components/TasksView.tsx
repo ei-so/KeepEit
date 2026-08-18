@@ -23,6 +23,8 @@ import {
   FolderPlus,
   Clock,
   CheckCircle2,
+  Bell,
+  BellRing,
 } from 'lucide-react';
 
 export const TasksView: React.FC = () => {
@@ -278,7 +280,31 @@ export const TasksView: React.FC = () => {
                                   month: 'short',
                                   day: 'numeric',
                                 })}
+                                {task.dueTime ? ` @ ${task.dueTime}` : ''}
                               </span>
+                            </div>
+                          )}
+
+                          {/* Alarm Bell Badge */}
+                          {task.alarmEnabled && (
+                            <div
+                              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-keepeit text-[9px] font-mono font-semibold ${
+                                task.status === 'completed' || task.alarmFired
+                                  ? 'bg-zinc-800/40 text-[var(--text-muted)]'
+                                  : 'bg-amber-500/15 text-amber-500 border border-amber-500/30'
+                              }`}
+                              title={
+                                task.alarmFired
+                                  ? 'Alarm triggered'
+                                  : `Alarm scheduled: ${task.reminderDate || task.dueDate || ''} ${task.reminderTime || task.dueTime || ''}`
+                              }
+                            >
+                              {task.alarmFired ? (
+                                <Bell className="w-3 h-3 text-[var(--text-muted)]" />
+                              ) : (
+                                <BellRing className="w-3 h-3 text-amber-500 animate-pulse" />
+                              )}
+                              <span>{task.reminderTime || task.dueTime || 'ALARM'}</span>
                             </div>
                           )}
 

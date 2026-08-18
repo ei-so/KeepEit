@@ -13,6 +13,7 @@ import {
 import * as store from '../lib/store';
 import { getHint } from '../lib/store';
 import * as passkeyLib from '../lib/passkey';
+import { requestMotionPermission } from '../lib/deviceSensors';
 
 interface VaultContextType {
   isUnlocked: boolean;
@@ -210,6 +211,9 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     setHasVault(true);
     setVaultData(res.vault);
     setIsUnlocked(true);
+    if (res.vault?.settings?.panicShakeEnabled) {
+      requestMotionPermission().catch(() => {});
+    }
     setPasswordHint(hint);
     if (displayName) {
       localStorage.setItem('keepeit_user_name', displayName.trim());
@@ -222,6 +226,9 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     const unlockedData = await store.unlock(password);
     setVaultData(unlockedData);
     setIsUnlocked(true);
+    if (unlockedData?.settings?.panicShakeEnabled) {
+      requestMotionPermission().catch(() => {});
+    }
     await refreshPasskeyState();
     resetTimer();
   };
@@ -230,6 +237,9 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     const unlockedData = await store.unlockWithRecovery(code);
     setVaultData(unlockedData);
     setIsUnlocked(true);
+    if (unlockedData?.settings?.panicShakeEnabled) {
+      requestMotionPermission().catch(() => {});
+    }
     await refreshPasskeyState();
     resetTimer();
   };
@@ -238,6 +248,9 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     const unlockedData = await passkeyLib.unlockPasskey();
     setVaultData(unlockedData);
     setIsUnlocked(true);
+    if (unlockedData?.settings?.panicShakeEnabled) {
+      requestMotionPermission().catch(() => {});
+    }
     await refreshPasskeyState();
     resetTimer();
   };

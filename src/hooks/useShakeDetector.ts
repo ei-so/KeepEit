@@ -31,8 +31,8 @@ export function useShakeDetector({
       return;
     }
 
-    // Reset coordinates and add a short 800ms cooldown buffer upon unlock
-    lastShakeTimeRef.current = Date.now() - (cooldownMs - 800);
+    // Cooldown grace period on unlock
+    lastShakeTimeRef.current = Date.now() - (cooldownMs - 600);
     lastCoordsRef.current = { x: null, y: null, z: null };
 
     const handleMotion = (event: DeviceMotionEvent) => {
